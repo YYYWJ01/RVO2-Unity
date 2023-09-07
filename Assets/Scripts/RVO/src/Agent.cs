@@ -36,7 +36,7 @@ using System.Collections.Generic;
 namespace RVO
 {
     /**
-     * <summary>Defines an agent in the simulation.</summary>
+     * <summary>在模拟中定义代理。</summary>
      */
     internal class Agent
     {
@@ -45,13 +45,34 @@ namespace RVO
         internal IList<Line> orcaLines_ = new List<Line>();
         internal Vector2 position_;
         internal Vector2 prefVelocity_;
+        /// <summary>
+        /// 新代理的默认初始二维线速度。
+        /// </summary>
         internal Vector2 velocity_;
         internal int id_ = 0;
+        /// <summary>
+        /// 新代理在导航中考虑的其他代理的默认最大数量。该数字越大，模拟的运行时间越长。 如果数字太低，模拟将不安全。
+        /// </summary>
         internal int maxNeighbors_ = 0;
+        /// <summary>
+        /// 新代理的默认最大速度。 必须是非负数。
+        /// </summary>
         internal float maxSpeed_ = 0.0f;
+        /// <summary>
+        /// 新代理在导航中考虑到其他代理的默认最大距离（中心点到中心点）。这个数字越大，模拟的运行时间就越长。 如果数字太低，模拟将不安全。 必须是非负数。
+        /// </summary>
         internal float neighborDist_ = 0.0f;
+        /// <summary>
+        /// 新代理的默认半径。 必须是非负数。
+        /// </summary>
         internal float radius_ = 0.0f;
+        /// <summary>
+        /// 通过模拟计算的新代理速度相对于其他代理来说是安全的默认最短时间。这个数字越大，代理对其他代理的存在做出响应的速度就越快，但代理选择其速度的自由度就越小。必须是正向的。
+        /// </summary>
         internal float timeHorizon_ = 0.0f;
+        /// <summary>
+        /// 通过模拟计算的新代理速度相对于障碍物是安全的默认最短时间。这个数字越大，智能体对障碍物的存在响应越快，但智能体选择速度的自由度就越小。必须是正向的。
+        /// </summary>
         internal float timeHorizonObst_ = 0.0f;
         internal bool needDelete_ = false;
 

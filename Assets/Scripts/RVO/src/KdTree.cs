@@ -36,13 +36,12 @@ using System;
 namespace RVO
 {
     /**
-     * <summary>Defines k-D trees for agents and static obstacles in the
-     * simulation.</summary>
+     * <summary>为模拟中的代理和静态障碍物定义 k-D 树。</summary>
      */
     internal class KdTree
     {
         /**
-         * <summary>Defines a node of an agent k-D tree.</summary>
+         * <summary>定义代理 k-D 树的节点。</summary>
          */
         private struct AgentTreeNode
         {
@@ -57,7 +56,7 @@ namespace RVO
         }
 
         /**
-         * <summary>Defines a pair of scalar values.</summary>
+         * <summary>定义一对标量值。</summary>
          */
         private struct FloatPair
         {
@@ -65,11 +64,10 @@ namespace RVO
             private float b_;
 
             /**
-             * <summary>Constructs and initializes a pair of scalar
-             * values.</summary>
+             * <summary>构造并初始化一对标量值。</summary>
              *
-             * <param name="a">The first scalar value.</returns>
-             * <param name="b">The second scalar value.</returns>
+             * <param name="a">第一个标量值。</returns>
+             * <param name="b">第二个标量值。</returns>
              */
             internal FloatPair(float a, float b)
             {
@@ -78,14 +76,12 @@ namespace RVO
             }
 
             /**
-             * <summary>Returns true if the first pair of scalar values is less
-             * than the second pair of scalar values.</summary>
+             * <summary>如果第一对标量值小于第二对标量值，则返回 true。</summary>
              *
-             * <returns>True if the first pair of scalar values is less than the
-             * second pair of scalar values.</returns>
+             * <returns>如果第一对标量值小于第二对标量值，则为 True。</returns>
              *
-             * <param name="pair1">The first pair of scalar values.</param>
-             * <param name="pair2">The second pair of scalar values.</param>
+             * <param name="pair1">第一对标量值。</param>
+             * <param name="pair2">第二对标量值。</param>
              */
             public static bool operator <(FloatPair pair1, FloatPair pair2)
             {
@@ -93,14 +89,12 @@ namespace RVO
             }
 
             /**
-             * <summary>Returns true if the first pair of scalar values is less
-             * than or equal to the second pair of scalar values.</summary>
+             * <summary>如果第一对标量值小于或等于第二对标量值，则返回 true。</summary>
              *
-             * <returns>True if the first pair of scalar values is less than or
-             * equal to the second pair of scalar values.</returns>
+             * <returns>如果第一对标量值小于或等于第二对标量值，则为 True。</returns>
              *
-             * <param name="pair1">The first pair of scalar values.</param>
-             * <param name="pair2">The second pair of scalar values.</param>
+             * <param name="pair1">第一对标量值。</param>
+             * <param name="pair2">第二对标量值。</param>
              */
             public static bool operator <=(FloatPair pair1, FloatPair pair2)
             {
@@ -108,14 +102,12 @@ namespace RVO
             }
 
             /**
-             * <summary>Returns true if the first pair of scalar values is
-             * greater than the second pair of scalar values.</summary>
+             * <summary>如果第一对标量值大于第二对标量值，则返回 true。</summary>
              *
-             * <returns>True if the first pair of scalar values is greater than
-             * the second pair of scalar values.</returns>
+             * <returns>如果第一对标量值大于第二对标量值，则为 True。</returns>
              *
-             * <param name="pair1">The first pair of scalar values.</param>
-             * <param name="pair2">The second pair of scalar values.</param>
+             * <param name="pair1">第一对标量值。</param>
+             * <param name="pair2">第二对标量值。</param>
              */
             public static bool operator >(FloatPair pair1, FloatPair pair2)
             {
@@ -123,15 +115,12 @@ namespace RVO
             }
 
             /**
-             * <summary>Returns true if the first pair of scalar values is
-             * greater than or equal to the second pair of scalar values.
-             * </summary>
+             * <summary>如果第一对标量值大于或等于第二对标量值，则返回 true。 </summary>
              *
-             * <returns>True if the first pair of scalar values is greater than
-             * or equal to the second pair of scalar values.</returns>
+             * <returns>如果第一对标量值大于或等于第二对标量值，则为 True。</returns>
              *
-             * <param name="pair1">The first pair of scalar values.</param>
-             * <param name="pair2">The second pair of scalar values.</param>
+             * <param name="pair1">第一对标量值。</param>
+             * <param name="pair2">第二对标量值。</param>
              */
             public static bool operator >=(FloatPair pair1, FloatPair pair2)
             {
@@ -140,17 +129,26 @@ namespace RVO
         }
 
         /**
-         * <summary>Defines a node of an obstacle k-D tree.</summary>
+         * <summary>定义障碍物 k-D 树的节点。</summary>
          */
         private class ObstacleTreeNode
         {
+            /// <summary>
+            /// 障碍物
+            /// </summary>
             internal Obstacle obstacle_;
+            /// <summary>
+            /// 障碍物 k-D 树的左节点
+            /// </summary>
             internal ObstacleTreeNode left_;
+            /// <summary>
+            /// 障碍物 k-D 树的右节点
+            /// </summary>
             internal ObstacleTreeNode right_;
         };
 
         /**
-         * <summary>The maximum size of an agent k-D tree leaf.</summary>
+         * <summary>代理 k-D 树叶的最大尺寸。</summary>
          */
         private const int MAX_LEAF_SIZE = 10;
 
@@ -187,29 +185,31 @@ namespace RVO
         }
 
         /**
-         * <summary>Builds an obstacle k-D tree.</summary>
+         * <summary>构建障碍物 k-D 树。</summary>
          */
         internal void buildObstacleTree()
         {
+            // 创建障碍树节点
             obstacleTree_ = new ObstacleTreeNode();
 
+            // 创建障碍物列表
             IList<Obstacle> obstacles = new List<Obstacle>(Simulator.Instance.obstacles_.Count);
 
+            // 将 模拟的障碍物 加入到 障碍物 列表内
             for (int i = 0; i < Simulator.Instance.obstacles_.Count; ++i)
             {
                 obstacles.Add(Simulator.Instance.obstacles_[i]);
             }
 
+            // 构建障碍物 k-D 树
             obstacleTree_ = buildObstacleTreeRecursive(obstacles);
         }
 
         /**
-         * <summary>Computes the agent neighbors of the specified agent.
-         * </summary>
+         * <summary>计算指定代理的代理邻居。</summary>
          *
-         * <param name="agent">The agent for which agent neighbors are to be
-         * computed.</param>
-         * <param name="rangeSq">The squared range around the agent.</param>
+         * <param name="agent">要计算代理邻居的代理。</param>
+         * <param name="rangeSq">代理周围的平方范围。</param>
          */
         internal void computeAgentNeighbors(Agent agent, ref float rangeSq)
         {
@@ -330,68 +330,89 @@ namespace RVO
         }
 
         /**
-         * <summary>Recursive method for building an obstacle k-D tree.
-         * </summary>
+         * <summary>构建障碍物 k-D 树的递归方法。</summary> 
          *
-         * <returns>An obstacle k-D tree node.</returns>
+         * PS：这个树结构用于在路径规划中进行碰撞检测和避障操作。
+         * 
+         * <returns>障碍物 k-D 树节点。</returns>
          *
-         * <param name="obstacles">A list of obstacles.</param>
+         * <param name="obstacles">障碍清单。</param>
          */
         private ObstacleTreeNode buildObstacleTreeRecursive(IList<Obstacle> obstacles)
         {
+            // 检查传入的障碍物列表是否为空。如果列表为空，意味着没有障碍物可用于构建 k-D 树，所以直接返回 null，表示没有树节点。
             if (obstacles.Count == 0)
             {
                 return null;
             }
 
+            // 创建障碍物 k-D 树的一个节点
             ObstacleTreeNode node = new ObstacleTreeNode();
 
+            // 最优分割点
             int optimalSplit = 0;
+            // 左子树的最小障碍物数量(初始值设为障碍物列表的总数)
             int minLeft = obstacles.Count;
+            // 右子树的最小障碍物数量(初始值设为障碍物列表的总数)
             int minRight = obstacles.Count;
-
+            
+            // 遍历障碍物列表中的每一个障碍物，找出最优分割点以及左子树与右子树的最小障碍物数量
             for (int i = 0; i < obstacles.Count; ++i)
             {
+                // 记录位于当前障碍物左侧和右侧的障碍物数量
                 int leftSize = 0;
                 int rightSize = 0;
 
+                // 获取当前的障碍物
                 Obstacle obstacleI1 = obstacles[i];
+                // 获取 当前障碍物 的 下一个障碍物
                 Obstacle obstacleI2 = obstacleI1.next_;
 
-                /* Compute optimal split node. */
+                /* 计算最佳分裂节点。 */
                 for (int j = 0; j < obstacles.Count; ++j)
-                {
+                {   
+                    // 如果外层索引与内层索引一致，则认为是同一个障碍物，直接跳过后续逻辑
                     if (i == j)
                     {
                         continue;
                     }
 
+                    // 获取当前选中的其他障碍物
                     Obstacle obstacleJ1 = obstacles[j];
+                    // 获取 当前选中其他障碍物 的 下一个障碍物
                     Obstacle obstacleJ2 = obstacleJ1.next_;
 
+                    // 检测 obstacleJ1 是否位于 obstacleI1 与 obstacleI2 线段的左侧(j1LeftOfI > 0 左侧，j1LeftOfI < 0 右侧,j1LeftOfI = 0 位于线段上)
                     float j1LeftOfI = RVOMath.leftOf(obstacleI1.point_, obstacleI2.point_, obstacleJ1.point_);
+                    // 检测 obstacleJ2 是否位于 obstacleI1 与 obstacleI2 线段的左侧
                     float j2LeftOfI = RVOMath.leftOf(obstacleI1.point_, obstacleI2.point_, obstacleJ2.point_);
-
+                    
+                    // 如果 j1LeftOfI 和 j2LeftOfI 都为非负值，则判定 左侧叶节点 +1
                     if (j1LeftOfI >= -RVOMath.RVO_EPSILON && j2LeftOfI >= -RVOMath.RVO_EPSILON)
                     {
                         ++leftSize;
                     }
+                    // 如果 j1LeftOfI 和 j2LeftOfI 都为负值，则判定 右侧叶节点 +1
                     else if (j1LeftOfI <= RVOMath.RVO_EPSILON && j2LeftOfI <= RVOMath.RVO_EPSILON)
                     {
                         ++rightSize;
                     }
+                    // 否则 左侧叶节点和右侧叶节点都 +1
                     else
                     {
                         ++leftSize;
                         ++rightSize;
                     }
 
+                    // 用于比较当前障碍物组合的左侧和右侧数量是否大于等于已知的最小数量（minLeft 和 minRight）。如果是，就跳出内层 for 循环，因为已经找到了一个更好的分割点。
                     if (new FloatPair(Math.Max(leftSize, rightSize), Math.Min(leftSize, rightSize)) >= new FloatPair(Math.Max(minLeft, minRight), Math.Min(minLeft, minRight)))
                     {
-                        break;
+                        break; 
                     }
                 }
-
+                
+                /// 更新最小左侧和右侧数量以及最佳分割点。
+                // 如果当前障碍物组合的左侧和右侧数量都小于已知的最小数量，那么将 minLeft 和 minRight 更新为当前左右数量，并将 optimalSplit 更新为当前索引 i，表示找到了一个更好的分割点。
                 if (new FloatPair(Math.Max(leftSize, rightSize), Math.Min(leftSize, rightSize)) < new FloatPair(Math.Max(minLeft, minRight), Math.Min(minLeft, minRight)))
                 {
                     minLeft = leftSize;
@@ -401,56 +422,72 @@ namespace RVO
             }
 
             {
-                /* Build split node. */
+                /* 构建分裂节点。 */
+                // 左子树的障碍物列表
                 IList<Obstacle> leftObstacles = new List<Obstacle>(minLeft);
-
                 for (int n = 0; n < minLeft; ++n)
                 {
                     leftObstacles.Add(null);
                 }
 
+                // 右子树的障碍物列表
                 IList<Obstacle> rightObstacles = new List<Obstacle>(minRight);
-
                 for (int n = 0; n < minRight; ++n)
                 {
                     rightObstacles.Add(null);
                 }
 
+                // 左子树计数器
                 int leftCounter = 0;
+                // 右子树计数器
                 int rightCounter = 0;
+                // 最优分割点
                 int i = optimalSplit;
 
+                // 最优分割点的障碍物
                 Obstacle obstacleI1 = obstacles[i];
+                // 最优分割点的障碍物 的 下一个障碍物
                 Obstacle obstacleI2 = obstacleI1.next_;
 
+                // 将障碍物分为左子树和右子树。在内循环中，同样检查是否当前障碍物与自身相同，如果是则跳过。
                 for (int j = 0; j < obstacles.Count; ++j)
                 {
                     if (i == j)
                     {
                         continue;
                     }
-
+                    
+                    // 获取当前选中的其他障碍物
                     Obstacle obstacleJ1 = obstacles[j];
+                    // 获取 当前选中其他障碍物 的 下一个障碍物
                     Obstacle obstacleJ2 = obstacleJ1.next_;
-
+                    
+                    // 检测 obstacleJ1 是否位于 obstacleI1 与 obstacleI2 线段的左侧(j1LeftOfI > 0 左侧，j1LeftOfI < 0 右侧,j1LeftOfI = 0 位于线段上)
                     float j1LeftOfI = RVOMath.leftOf(obstacleI1.point_, obstacleI2.point_, obstacleJ1.point_);
+                    // 检测 obstacleJ2 是否位于 obstacleI1 与 obstacleI2 线段的左侧
                     float j2LeftOfI = RVOMath.leftOf(obstacleI1.point_, obstacleI2.point_, obstacleJ2.point_);
 
+                    // 如果 j1LeftOfI 和 j2LeftOfI 都为非负值，则记录为 左子树障碍物节点
                     if (j1LeftOfI >= -RVOMath.RVO_EPSILON && j2LeftOfI >= -RVOMath.RVO_EPSILON)
                     {
                         leftObstacles[leftCounter++] = obstacles[j];
                     }
+                    // 如果 j1LeftOfI 和 j2LeftOfI 都为负值，则记录为 右子树障碍物节点
                     else if (j1LeftOfI <= RVOMath.RVO_EPSILON && j2LeftOfI <= RVOMath.RVO_EPSILON)
                     {
                         rightObstacles[rightCounter++] = obstacles[j];
                     }
                     else
                     {
-                        /* Split obstacle j. */
+                        /* 分割障碍物 j. */
+                        // 如果障碍物既不全在左侧也不全在右侧，那么就需要对它进行分割。
+
+                        // 通过求解两个向量的叉积来找到相交点。
                         float t = RVOMath.det(obstacleI2.point_ - obstacleI1.point_, obstacleJ1.point_ - obstacleI1.point_) / RVOMath.det(obstacleI2.point_ - obstacleI1.point_, obstacleJ1.point_ - obstacleJ2.point_);
 
                         Vector2 splitPoint = obstacleJ1.point_ + t * (obstacleJ2.point_ - obstacleJ1.point_);
 
+                        // 在找到分割点后，创建了一个新的障碍物 newObstacle，并将其属性设置为合适的值。然后，将这个新的障碍物添加到障碍物列表中，并更新相邻障碍物的连接关系。
                         Obstacle newObstacle = new Obstacle();
                         newObstacle.point_ = splitPoint;
                         newObstacle.previous_ = obstacleJ1;
@@ -465,6 +502,7 @@ namespace RVO
                         obstacleJ1.next_ = newObstacle;
                         obstacleJ2.previous_ = newObstacle;
 
+                        // 根据 j1LeftOfI 的值，将当前障碍物添加到左子树或右子树，并更新计数器。
                         if (j1LeftOfI > 0.0f)
                         {
                             leftObstacles[leftCounter++] = obstacleJ1;
@@ -478,6 +516,7 @@ namespace RVO
                     }
                 }
 
+                // 用于构建分裂节点，将当前节点 node 设置为 obstacleI1，并递归地构建左子树和右子树，分别传入 leftObstacles 和 rightObstacles。
                 node.obstacle_ = obstacleI1;
                 node.left_ = buildObstacleTreeRecursive(leftObstacles);
                 node.right_ = buildObstacleTreeRecursive(rightObstacles);

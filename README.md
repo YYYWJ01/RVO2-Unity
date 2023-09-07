@@ -15,7 +15,7 @@ https://github.com/snape/RVO2-CS
 
 
 ## Requirement
-* Unity 2017.1.2
+* Unity 2020.3.31f1
 * No other SDK are required.
 
 

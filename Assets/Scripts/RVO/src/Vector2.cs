@@ -36,7 +36,7 @@ using System.Globalization;
 namespace RVO
 {
     /**
-     * <summary>Defines a two-dimensional vector.</summary>
+     * <summary>定义二维向量。</summary>
      */
     public struct Vector2
     {
@@ -44,13 +44,10 @@ namespace RVO
         internal float y_;
 
         /**
-         * <summary>Constructs and initializes a two-dimensional vector from the
-         * specified xy-coordinates.</summary>
+         * <summary>根据指定的 xy 坐标构造并初始化一个二维向量。</summary>
          *
-         * <param name="x">The x-coordinate of the two-dimensional vector.
-         * </param>
-         * <param name="y">The y-coordinate of the two-dimensional vector.
-         * </param>
+         * <param name="x">二维向量的 x 坐标。</param>
+         * <param name="y">二维向量的 y 坐标。</param>
          */
         public Vector2(float x, float y)
         {
@@ -59,9 +56,9 @@ namespace RVO
         }
 
         /**
-         * <summary>Returns the string representation of this vector.</summary>
+         * <summary>返回此向量的字符串表示形式。</summary>
          *
-         * <returns>The string representation of this vector.</returns>
+         * <returns>该向量的字符串表示形式。</returns>
          */
         public override string ToString()
         {
@@ -69,10 +66,9 @@ namespace RVO
         }
 
         /**
-         * <summary>Returns the x-coordinate of this two-dimensional vector.
-         * </summary>
+         * <summary>返回该二维向量的 x 坐标。</summary>
          *
-         * <returns>The x-coordinate of the two-dimensional vector.</returns>
+         * <returns>二维向量的 x 坐标。</returns>
          */
         public float x()
         {
@@ -80,10 +76,9 @@ namespace RVO
         }
 
         /**
-         * <summary>Returns the y-coordinate of this two-dimensional vector.
-         * </summary>
+         * <summary>返回该二维向量的 y 坐标。</summary>
          *
-         * <returns>The y-coordinate of the two-dimensional vector.</returns>
+         * <returns>二维向量的 y 坐标。</returns>
          */
         public float y()
         {
@@ -91,14 +86,12 @@ namespace RVO
         }
 
         /**
-         * <summary>Computes the dot product of the two specified
-         * two-dimensional vectors.</summary>
+         * <summary>计算两个指定的二维向量的点积。</summary>
          *
-         * <returns>The dot product of the two specified two-dimensional
-         * vectors.</returns>
+         * <returns>两个指定的二维向量的点积。</returns>
          *
-         * <param name="vector1">The first two-dimensional vector.</param>
-         * <param name="vector2">The second two-dimensional vector.</param>
+         * <param name="vector1">第一个二维向量。</param>
+         * <param name="vector2">第二个二维向量。</param>
          */
         public static float operator *(Vector2 vector1, Vector2 vector2)
         {
@@ -106,14 +99,12 @@ namespace RVO
         }
 
         /**
-         * <summary>Computes the scalar multiplication of the specified
-         * two-dimensional vector with the specified scalar value.</summary>
+         * <summary>计算指定二维向量与指定标量值的标量乘法。</summary>
          *
-         * <returns>The scalar multiplication of the specified two-dimensional
-         * vector with the specified scalar value.</returns>
+         * <returns>指定二维向量与指定标量值的标量乘法。</returns>
          *
-         * <param name="scalar">The scalar value.</param>
-         * <param name="vector">The two-dimensional vector.</param>
+         * <param name="scalar">标量值。</param>
+         * <param name="vector">二维向量。</param>
          */
         public static Vector2 operator *(float scalar, Vector2 vector)
         {
@@ -121,14 +112,12 @@ namespace RVO
         }
 
         /**
-         * <summary>Computes the scalar multiplication of the specified
-         * two-dimensional vector with the specified scalar value.</summary>
+         * <summary>计算指定二维向量与指定标量值的标量乘法。</summary>
          *
-         * <returns>The scalar multiplication of the specified two-dimensional
-         * vector with the specified scalar value.</returns>
+         * <returns>指定二维向量与指定标量值的标量乘法。</returns>
          *
-         * <param name="vector">The two-dimensional vector.</param>
-         * <param name="scalar">The scalar value.</param>
+         * <param name="vector">二维向量。</param>
+         * <param name="scalar">标量值。</param>
          */
         public static Vector2 operator *(Vector2 vector, float scalar)
         {
@@ -136,14 +125,12 @@ namespace RVO
         }
 
         /**
-         * <summary>Computes the scalar division of the specified
-         * two-dimensional vector with the specified scalar value.</summary>
+         * <summary>计算指定二维向量与指定标量值的标量除法。</summary>
          *
-         * <returns>The scalar division of the specified two-dimensional vector
-         * with the specified scalar value.</returns>
+         * <returns>指定二维向量与指定标量值的标量除法。</returns>
          *
-         * <param name="vector">The two-dimensional vector.</param>
-         * <param name="scalar">The scalar value.</param>
+         * <param name="vector">二维向量。</param>
+         * <param name="scalar">标量值。</param>
          */
         public static Vector2 operator /(Vector2 vector, float scalar)
         {
@@ -151,14 +138,12 @@ namespace RVO
         }
 
         /**
-         * <summary>Computes the vector sum of the two specified two-dimensional
-         * vectors.</summary>
+         * <summary>计算两个指定的二维向量的向量和。</summary>
          *
-         * <returns>The vector sum of the two specified two-dimensional vectors.
-         * </returns>
+         * <returns>两个指定二维向量的向量和。</returns>
          *
-         * <param name="vector1">The first two-dimensional vector.</param>
-         * <param name="vector2">The second two-dimensional vector.</param>
+         * <param name="vector1">第一个二维向量。</param>
+         * <param name="vector2">第二个二维向量。</param>
          */
         public static Vector2 operator +(Vector2 vector1, Vector2 vector2)
         {
@@ -166,14 +151,12 @@ namespace RVO
         }
 
         /**
-         * <summary>Computes the vector difference of the two specified
-         * two-dimensional vectors</summary>
+         * <summary>计算两个指定二维向量的向量差</summary>
          *
-         * <returns>The vector difference of the two specified two-dimensional
-         * vectors.</returns>
+         * <returns>两个指定二维向量的向量差。</returns>
          *
-         * <param name="vector1">The first two-dimensional vector.</param>
-         * <param name="vector2">The second two-dimensional vector.</param>
+         * <param name="vector1">第一个二维向量。</param>
+         * <param name="vector2">第二个二维向量。</param>
          */
         public static Vector2 operator -(Vector2 vector1, Vector2 vector2)
         {
@@ -181,13 +164,11 @@ namespace RVO
         }
 
         /**
-         * <summary>Computes the negation of the specified two-dimensional
-         * vector.</summary>
+         * <summary>计算指定二维向量的负值。</summary>
          *
-         * <returns>The negation of the specified two-dimensional vector.
-         * </returns>
+         * <returns>指定二维向量的求反。</returns>
          *
-         * <param name="vector">The two-dimensional vector.</param>
+         * <param name="vector">二维向量。</param>
          */
         public static Vector2 operator -(Vector2 vector)
         {

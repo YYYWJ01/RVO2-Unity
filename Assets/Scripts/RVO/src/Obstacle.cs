@@ -33,16 +33,34 @@
 namespace RVO
 {
     /**
-     * <summary>Defines static obstacles in the simulation.</summary>
+     * <summary>定义模拟中的静态障碍物。</summary>
      */
     internal class Obstacle
     {
-
+        
+        /// <summary>
+        /// 下一个障碍物
+        /// </summary>
         internal Obstacle next_;
+        /// <summary>
+        /// 前一个的障碍物
+        /// </summary>
         internal Obstacle previous_;
+        /// <summary>
+        /// 障碍物的方向
+        /// </summary>
         internal Vector2 direction_;
+        /// <summary>
+        /// 障碍物的位置
+        /// </summary>
         internal Vector2 point_;
+        /// <summary>
+        /// 障碍物的Id
+        /// </summary>
         internal int id_;
+        /// <summary>
+        /// 是否为凸多边形（凸 => true, 凹 => false）
+        /// </summary>
         internal bool convex_;
     }
 }

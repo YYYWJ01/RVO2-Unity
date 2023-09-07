@@ -37,12 +37,12 @@ using System.Threading;
 namespace RVO
 {
     /**
-     * <summary>Defines the simulation.</summary>
+     * <summary>定义模拟。</summary>
      */
     public class Simulator
     {
         /**
-         * <summary>Defines a worker.</summary>
+         * <summary>定义一个工作者。</summary>
          */
         private class Worker
         {
@@ -51,11 +51,11 @@ namespace RVO
             private int start_;
 
             /**
-             * <summary>Constructs and initializes a worker.</summary>
+             * <summary>构造并初始化工作线程。</summary>
              *
              * <param name="start">Start.</param>
              * <param name="end">End.</param>
-             * <param name="doneEvent">Done event.</param>
+             * <param name="doneEvent">完成事件.</param>
              */
             internal Worker(int start, int end, ManualResetEvent doneEvent)
             {
@@ -71,7 +71,7 @@ namespace RVO
             }
 
             /**
-             * <summary>Performs a simulation step.</summary>
+             * <summary>执行模拟步骤。</summary>
              *
              * <param name="obj">Unused.</param>
              */
@@ -86,8 +86,7 @@ namespace RVO
             }
 
             /**
-             * <summary>updates the two-dimensional position and
-             * two-dimensional velocity of each agent.</summary>
+             * <summary>更新每个智能体的二维位置和二维速度。</summary>
              *
              * <param name="obj">Unused.</param>
              */
@@ -104,9 +103,21 @@ namespace RVO
 
         internal IDictionary<int, int> agentNo2indexDict_;
         internal IDictionary<int, int> index2agentNoDict_;
+        /// <summary>
+        /// 代理列表
+        /// </summary>
         internal IList<Agent> agents_;
+        /// <summary>
+        /// 障碍物列表
+        /// </summary>
         internal IList<Obstacle> obstacles_;
+        /// <summary>
+        /// k-D 树
+        /// </summary>
         internal KdTree kdTree_;
+        /// <summary>
+        /// 帧时间
+        /// </summary>
         internal float timeStep_;
 
         private static Simulator instance_ = new Simulator();
@@ -148,14 +159,11 @@ namespace RVO
 
         static int s_totalID = 0;
         /**
-         * <summary>Adds a new agent with default properties to the simulation.
-         * </summary>
+         * <summary>将具有默认属性的新代理添加到模拟中。 </summary>
          *
-         * <returns>The number of the agent, or -1 when the agent defaults have
-         * not been set.</returns>
+         * <returns>代理编号，如果未设置代理默认值，则为 -1。</returns>
          *
-         * <param name="position">The two-dimensional starting position of this
-         * agent.</param>
+         * <param name="position">该代理的二维起始位置。</param>
          */
         public int addAgent(Vector2 position)
         {
@@ -205,38 +213,25 @@ namespace RVO
         }
 
         /**
-         * <summary>Adds a new agent to the simulation.</summary>
+         * <summary>将新代理添加到模拟中。</summary>
          *
-         * <returns>The number of the agent.</returns>
+         * <returns>代理编号。</returns>
          *
-         * <param name="position">The two-dimensional starting position of this
-         * agent.</param>
-         * <param name="neighborDist">The maximum distance (center point to
-         * center point) to other agents this agent takes into account in the
-         * navigation. The larger this number, the longer the running time of
-         * the simulation. If the number is too low, the simulation will not be
-         * safe. Must be non-negative.</param>
-         * <param name="maxNeighbors">The maximum number of other agents this
-         * agent takes into account in the navigation. The larger this number,
-         * the longer the running time of the simulation. If the number is too
-         * low, the simulation will not be safe.</param>
-         * <param name="timeHorizon">The minimal amount of time for which this
-         * agent's velocities that are computed by the simulation are safe with
-         * respect to other agents. The larger this number, the sooner this
-         * agent will respond to the presence of other agents, but the less
-         * freedom this agent has in choosing its velocities. Must be positive.
+         * <param name="position">这个物体的二维初始位置。</param>
+         * <param name="neighborDist">该代理在导航中考虑到的到其他代理的最大距离（中心点到中心点）。 
+         * 该数字越大，模拟的运行时间越长。 如果数字太低，模拟将不安全。 必须是非负数。</param>
+         * <param name="maxNeighbors">该代理在导航中考虑的其他代理的最大数量。 
+         * 该数字越大，模拟的运行时间越长。 如果数字太低，模拟将不安全。</param>
+         * <param name="timeHorizon">通过模拟计算出的该代理的速度相对于其他代理来说是安全的最短时间。 
+         * 这个数字越大，该代理对其他代理的存在做出响应的速度就越快，但该代理选择其速度的自由度就越小。 
+         * 必须是正值。
          * </param>
-         * <param name="timeHorizonObst">The minimal amount of time for which
-         * this agent's velocities that are computed by the simulation are safe
-         * with respect to obstacles. The larger this number, the sooner this
-         * agent will respond to the presence of obstacles, but the less freedom
-         * this agent has in choosing its velocities. Must be positive.</param>
-         * <param name="radius">The radius of this agent. Must be non-negative.
+         * <param name="timeHorizonObst">通过模拟计算出的该代理速度相对于障碍物是安全的最短时间。 
+         * 这个数字越大，该智能体对障碍物的存在响应越快，但该智能体选择速度的自由度就越小。 
+         * 必须是正值。
          * </param>
-         * <param name="maxSpeed">The maximum speed of this agent. Must be
-         * non-negative.</param>
-         * <param name="velocity">The initial two-dimensional linear velocity of
-         * this agent.</param>
+         * <param name="maxSpeed">该代理的最大速度。 必须是非负数。</param>
+         * <param name="velocity">该代理的初始二维线速度。</param>
          */
         public int addAgent(Vector2 position, float neighborDist, int maxNeighbors, float timeHorizon, float timeHorizonObst, float radius, float maxSpeed, Vector2 velocity)
         {
@@ -257,46 +252,54 @@ namespace RVO
         }
 
         /**
-         * <summary>Adds a new obstacle to the simulation.</summary>
+         * <summary>在模拟中增加了一个新的障碍。</summary>
          *
-         * <returns>The number of the first vertex of the obstacle, or -1 when
-         * the number of vertices is less than two.</returns>
+         * <returns>障碍物的第一个顶点的数目，当顶点数目少于两个时为-1。</returns>
          *
-         * <param name="vertices">List of the vertices of the polygonal obstacle
-         * in counterclockwise order.</param>
+         * <param name="vertices">多边形障碍物的顶点列表，按逆时针顺序排列。</param>
          *
-         * <remarks>To add a "negative" obstacle, e.g. a bounding polygon around
-         * the environment, the vertices should be listed in clockwise order.
-         * </remarks>
+         * <remarks>为了添加一个“负面”障碍，例如一个围绕环境的边界多边形，顶点应该按顺时针顺序排列。 </remarks>
          */
         public int addObstacle(IList<Vector2> vertices)
         {
+            // 如果 多边形障碍物的顶点列表 数据 < 2，无法形成有效的障碍物，函数返回 -1 表示添加失败。
             if (vertices.Count < 2)
             {
                 return -1;
             }
-
+            
+            // 通过获取障碍物列表的元素数量来确定新障碍物的编号。
             int obstacleNo = obstacles_.Count;
 
+            // 遍历传入的障碍物顶点列表 vertices
             for (int i = 0; i < vertices.Count; ++i)
             {
+                // 根据顶点数据，创建新的障碍物
                 Obstacle obstacle = new Obstacle();
                 obstacle.point_ = vertices[i];
-
+                
+                // 如果不是第一个顶点，就将当前障碍物的 previous_ 属性设置为 obstacles_ 列表中的最后一个障碍物，同时更新最后一个障碍物的 next_ 属性为当前障碍物。
+                // 这样彼此连接起来，形成了一个链表。 
                 if (i != 0)
                 {
                     obstacle.previous_ = obstacles_[obstacles_.Count - 1];
                     obstacle.previous_.next_ = obstacle;
                 }
 
+                // 处理最后一个顶点的情况。
+                // 如果当前顶点是最后一个顶点，就将当前障碍物的 next_ 属性连接回到起始的障碍物，并将起始障碍物的 previous_ 连接到当前障碍物，以形成闭合的链表环。
                 if (i == vertices.Count - 1)
                 {
                     obstacle.next_ = obstacles_[obstacleNo];
                     obstacle.next_.previous_ = obstacle;
                 }
 
+                // 计算了障碍物的方向向量。它使用 RVOMath.normalize 函数来计算从当前顶点指向下一个顶点的单位向量，表示障碍物的朝向。
                 obstacle.direction_ = RVOMath.normalize(vertices[(i == vertices.Count - 1 ? 0 : i + 1)] - vertices[i]);
 
+                /// 计算障碍物是否为凸多边形。
+                // 如果顶点数量为2，那么障碍物被认为是凸的。
+                // 否则，它使用 RVOMath.leftOf 函数来计算当前顶点、前一个顶点和后一个顶点的位置关系，如果结果大于等于0，表示是凸多边形，否则是凹多边形。
                 if (vertices.Count == 2)
                 {
                     obstacle.convex_ = true;
@@ -306,6 +309,7 @@ namespace RVO
                     obstacle.convex_ = (RVOMath.leftOf(vertices[(i == 0 ? vertices.Count - 1 : i - 1)], vertices[i], vertices[(i == vertices.Count - 1 ? 0 : i + 1)]) >= 0.0f);
                 }
 
+                // 每个障碍物被赋予一个唯一的 id_，然后将其添加到 obstacles_ 列表中。
                 obstacle.id_ = obstacles_.Count;
                 obstacles_.Add(obstacle);
             }
@@ -314,7 +318,7 @@ namespace RVO
         }
 
         /**
-         * <summary>Clears the simulation.</summary>
+         * <summary>清除模拟。</summary>
          */
         public void Clear()
         {
@@ -331,10 +335,9 @@ namespace RVO
         }
 
         /**
-         * <summary>Performs a simulation step and updates the two-dimensional
-         * position and two-dimensional velocity of each agent.</summary>
+         * <summary>执行模拟步骤并更新每个代理的二维位置和二维速度。</summary>
          *
-         * <returns>The global time after the simulation step.</returns>
+         * <returns>模拟步骤后的全局时间。</returns>
          */
         public float doStep()
         {
@@ -386,15 +389,12 @@ namespace RVO
         }
 
         /**
-         * <summary>Returns the specified agent neighbor of the specified agent.
-         * </summary>
+         * <summary>返回指定代理的指定代理邻居。</summary>
          *
-         * <returns>The number of the neighboring agent.</returns>
+         * <returns>相邻代理的编号。</returns>
          *
-         * <param name="agentNo">The number of the agent whose agent neighbor is
-         * to be retrieved.</param>
-         * <param name="neighborNo">The number of the agent neighbor to be
-         * retrieved.</param>
+         * <param name="agentNo">要检索其代理邻居的代理的编号。</param>
+         * <param name="neighborNo">要检索的代理邻居的编号。</param>
          */
         public int getAgentAgentNeighbor(int agentNo, int neighborNo)
         {
@@ -402,13 +402,11 @@ namespace RVO
         }
 
         /**
-         * <summary>Returns the maximum neighbor count of a specified agent.
-         * </summary>
+         * <summary>返回指定代理的最大邻居计数。</summary>
          *
-         * <returns>The present maximum neighbor count of the agent.</returns>
+         * <returns>代理当前的最大邻居计数。</returns>
          *
-         * <param name="agentNo">The number of the agent whose maximum neighbor
-         * count is to be retrieved.</param>
+         * <param name="agentNo">要检索最大邻居计数的代理的编号。</param>
          */
         public int getAgentMaxNeighbors(int agentNo)
         {
@@ -416,12 +414,11 @@ namespace RVO
         }
 
         /**
-         * <summary>Returns the maximum speed of a specified agent.</summary>
+         * <summary>返回指定代理的最大速度。</summary>
          *
-         * <returns>The present maximum speed of the agent.</returns>
+         * <returns>代理当前的最大速度。</returns>
          *
-         * <param name="agentNo">The number of the agent whose maximum speed is
-         * to be retrieved.</param>
+         * <param name="agentNo">要检索最大速度的代理编号。</param>
          */
         public float getAgentMaxSpeed(int agentNo)
         {
@@ -429,14 +426,11 @@ namespace RVO
         }
 
         /**
-         * <summary>Returns the maximum neighbor distance of a specified agent.
-         * </summary>
+         * <summary>返回指定代理的最大邻居距离。</summary>
          *
-         * <returns>The present maximum neighbor distance of the agent.
-         * </returns>
+         * <returns>代理当前的最大邻居距离。</returns>
          *
-         * <param name="agentNo">The number of the agent whose maximum neighbor
-         * distance is to be retrieved.</param>
+         * <param name="agentNo">要检索最大邻居距离的代理的编号。</param>
          */
         public float getAgentNeighborDist(int agentNo)
         {
@@ -444,14 +438,11 @@ namespace RVO
         }
 
         /**
-         * <summary>Returns the count of agent neighbors taken into account to
-         * compute the current velocity for the specified agent.</summary>
+         * <summary>返回计算指定代理的当前速度时考虑的代理邻居的计数。</summary>
          *
-         * <returns>The count of agent neighbors taken into account to compute
-         * the current velocity for the specified agent.</returns>
+         * <returns>计算指定代理的当前速度时考虑的代理邻居的计数。</returns>
          *
-         * <param name="agentNo">The number of the agent whose count of agent
-         * neighbors is to be retrieved.</param>
+         * <param name="agentNo">要检索其代理邻居计数的代理的编号。</param>
          */
         public int getAgentNumAgentNeighbors(int agentNo)
         {
@@ -459,14 +450,11 @@ namespace RVO
         }
 
         /**
-         * <summary>Returns the count of obstacle neighbors taken into account
-         * to compute the current velocity for the specified agent.</summary>
+         * <summary>返回计算指定代理的当前速度时考虑的障碍物邻居的计数。</summary>
          *
-         * <returns>The count of obstacle neighbors taken into account to
-         * compute the current velocity for the specified agent.</returns>
+         * <returns>计算指定代理的当前速度时考虑的障碍物邻居的数量。</returns>
          *
-         * <param name="agentNo">The number of the agent whose count of obstacle
-         * neighbors is to be retrieved.</param>
+         * <param name="agentNo">要检索其障碍物邻居计数的代理的编号。</param>
          */
         public int getAgentNumObstacleNeighbors(int agentNo)
         {
@@ -474,16 +462,12 @@ namespace RVO
         }
 
         /**
-         * <summary>Returns the specified obstacle neighbor of the specified
-         * agent.</summary>
+         * <summary>返回指定代理的指定障碍物邻居。</summary>
          *
-         * <returns>The number of the first vertex of the neighboring obstacle
-         * edge.</returns>
+         * <returns>相邻障碍物边的第一个顶点的编号。</returns>
          *
-         * <param name="agentNo">The number of the agent whose obstacle neighbor
-         * is to be retrieved.</param>
-         * <param name="neighborNo">The number of the obstacle neighbor to be
-         * retrieved.</param>
+         * <param name="agentNo">要检索其障碍邻居的智能体的编号。</param>
+         * <param name="neighborNo">要检索的障碍物邻居的编号。</param>
          */
         public int getAgentObstacleNeighbor(int agentNo, int neighborNo)
         {
@@ -491,17 +475,13 @@ namespace RVO
         }
 
         /**
-         * <summary>Returns the ORCA constraints of the specified agent.
-         * </summary>
+         * <summary>返回指定代理的 ORCA 约束。</summary>
          *
-         * <returns>A list of lines representing the ORCA constraints.</returns>
+         * <returns>表示 ORCA 约束的行列表。</returns>
          *
-         * <param name="agentNo">The number of the agent whose ORCA constraints
-         * are to be retrieved.</param>
+         * <param name="agentNo">要检索 ORCA 约束的代理的编号。</param>
          *
-         * <remarks>The halfplane to the left of each line is the region of
-         * permissible velocities with respect to that ORCA constraint.
-         * </remarks>
+         * <remarks>每条线左侧的半平面是相对于 ORCA 约束的允许速度区域。</remarks>
          */
         public IList<Line> getAgentOrcaLines(int agentNo)
         {
@@ -509,14 +489,11 @@ namespace RVO
         }
 
         /**
-         * <summary>Returns the two-dimensional position of a specified agent.
-         * </summary>
+         * <summary>返回指定代理的二维位置。</summary>
          *
-         * <returns>The present two-dimensional position of the (center of the)
-         * agent.</returns>
+         * <returns>智能体（中心）当前的二维位置。</returns>
          *
-         * <param name="agentNo">The number of the agent whose two-dimensional
-         * position is to be retrieved.</param>
+         * <param name="agentNo">要检索其二维位置的代理的编号。</param>
          */
         public Vector2 getAgentPosition(int agentNo)
         {
@@ -524,14 +501,11 @@ namespace RVO
         }
 
         /**
-         * <summary>Returns the two-dimensional preferred velocity of a
-         * specified agent.</summary>
+         * <summary>返回指定代理的二维首选速度。</summary>
          *
-         * <returns>The present two-dimensional preferred velocity of the agent.
-         * </returns>
+         * <returns>代理当前的二维首选速度。</returns>
          *
-         * <param name="agentNo">The number of the agent whose two-dimensional
-         * preferred velocity is to be retrieved.</param>
+         * <param name="agentNo">要检索其二维首选速度的代理的数量。</param>
          */
         public Vector2 getAgentPrefVelocity(int agentNo)
         {
@@ -539,12 +513,11 @@ namespace RVO
         }
 
         /**
-         * <summary>Returns the radius of a specified agent.</summary>
+         * <summary>返回指定代理的半径。</summary>
          *
-         * <returns>The present radius of the agent.</returns>
+         * <returns>代理的当前半径。</returns>
          *
-         * <param name="agentNo">The number of the agent whose radius is to be
-         * retrieved.</param>
+         * <param name="agentNo">要检索半径的代理编号。</param>
          */
         public float getAgentRadius(int agentNo)
         {
@@ -552,12 +525,11 @@ namespace RVO
         }
 
         /**
-         * <summary>Returns the time horizon of a specified agent.</summary>
+         * <summary>返回指定代理的时间范围。</summary>
          *
-         * <returns>The present time horizon of the agent.</returns>
+         * <returns>代理的当前时间范围。</returns>
          *
-         * <param name="agentNo">The number of the agent whose time horizon is
-         * to be retrieved.</param>
+         * <param name="agentNo">要检索时间范围的代理的编号。</param>
          */
         public float getAgentTimeHorizon(int agentNo)
         {
@@ -565,14 +537,11 @@ namespace RVO
         }
 
         /**
-         * <summary>Returns the time horizon with respect to obstacles of a
-         * specified agent.</summary>
+         * <summary>返回指定代理的障碍物的时间范围。</summary>
          *
-         * <returns>The present time horizon with respect to obstacles of the
-         * agent.</returns>
+         * <returns>相对于代理障碍的当前时间范围。</returns>
          *
-         * <param name="agentNo">The number of the agent whose time horizon with
-         * respect to obstacles is to be retrieved.</param>
+         * <param name="agentNo">要检索其相对于障碍物的时间范围的代理的数量。</param>
          */
         public float getAgentTimeHorizonObst(int agentNo)
         {
@@ -580,14 +549,11 @@ namespace RVO
         }
 
         /**
-         * <summary>Returns the two-dimensional linear velocity of a specified
-         * agent.</summary>
+         * <summary>返回指定代理的二维线速度。</summary>
          *
-         * <returns>The present two-dimensional linear velocity of the agent.
-         * </returns>
+         * <returns>代理当前的二维线速度。</returns>
          *
-         * <param name="agentNo">The number of the agent whose two-dimensional
-         * linear velocity is to be retrieved.</param>
+         * <param name="agentNo">待检索二维线速度的智能体编号。</param>
          */
         public Vector2 getAgentVelocity(int agentNo)
         {
@@ -595,10 +561,9 @@ namespace RVO
         }
 
         /**
-         * <summary>Returns the global time of the simulation.</summary>
+         * <summary>返回模拟的全局时间。</summary>
          *
-         * <returns>The present global time of the simulation (zero initially).
-         * </returns>
+         * <returns>模拟的当前全局时间（最初为零）。</returns>
          */
         public float getGlobalTime()
         {
@@ -606,9 +571,9 @@ namespace RVO
         }
 
         /**
-         * <summary>Returns the count of agents in the simulation.</summary>
+         * <summary>返回模拟中代理的数量。</summary>
          *
-         * <returns>The count of agents in the simulation.</returns>
+         * <returns>模拟中的代理数量。</returns>
          */
         public int getNumAgents()
         {
@@ -616,10 +581,9 @@ namespace RVO
         }
 
         /**
-         * <summary>Returns the count of obstacle vertices in the simulation.
-         * </summary>
+         * <summary>返回模拟中障碍物顶点的计数。</summary>
          *
-         * <returns>The count of obstacle vertices in the simulation.</returns>
+         * <returns>模拟中障碍物顶点的数量。</returns>
          */
         public int getNumObstacleVertices()
         {
@@ -627,9 +591,9 @@ namespace RVO
         }
 
         /**
-         * <summary>Returns the count of workers.</summary>
+         * <summary>返回工作者的数量。</summary>
          *
-         * <returns>The count of workers.</returns>
+         * <returns>工作者数量。</returns>
          */
         public int GetNumWorkers()
         {
@@ -637,14 +601,11 @@ namespace RVO
         }
 
         /**
-         * <summary>Returns the two-dimensional position of a specified obstacle
-         * vertex.</summary>
+         * <summary>返回指定障碍物顶点的二维位置。</summary>
          *
-         * <returns>The two-dimensional position of the specified obstacle
-         * vertex.</returns>
+         * <returns>指定障碍物顶点的二维位置。</returns>
          *
-         * <param name="vertexNo">The number of the obstacle vertex to be
-         * retrieved.</param>
+         * <param name="vertexNo">要检索的障碍物顶点的数量。</param>
          */
         public Vector2 getObstacleVertex(int vertexNo)
         {
@@ -652,14 +613,11 @@ namespace RVO
         }
 
         /**
-         * <summary>Returns the number of the obstacle vertex succeeding the
-         * specified obstacle vertex in its polygon.</summary>
+         * <summary>返回其多边形中指定障碍物顶点之后的障碍物顶点的编号。</summary>
          *
-         * <returns>The number of the obstacle vertex succeeding the specified
-         * obstacle vertex in its polygon.</returns>
+         * <returns>其多边形中指定障碍物顶点之后的障碍物顶点的数量。</returns>
          *
-         * <param name="vertexNo">The number of the obstacle vertex whose
-         * successor is to be retrieved.</param>
+         * <param name="vertexNo">要检索其后继的障碍物顶点的编号。</param>
          */
         public int getNextObstacleVertexNo(int vertexNo)
         {
@@ -667,14 +625,11 @@ namespace RVO
         }
 
         /**
-         * <summary>Returns the number of the obstacle vertex preceding the
-         * specified obstacle vertex in its polygon.</summary>
+         * <summary>返回其多边形中指定障碍物顶点之前的障碍物顶点的编号。</summary>
          *
-         * <returns>The number of the obstacle vertex preceding the specified
-         * obstacle vertex in its polygon.</returns>
+         * <returns>其多边形中指定障碍物顶点之前的障碍物顶点的数量。</returns>
          *
-         * <param name="vertexNo">The number of the obstacle vertex whose
-         * predecessor is to be retrieved.</param>
+         * <param name="vertexNo">要检索其前身的障碍物顶点的编号。</param>
          */
         public int getPrevObstacleVertexNo(int vertexNo)
         {
@@ -682,9 +637,9 @@ namespace RVO
         }
 
         /**
-         * <summary>Returns the time step of the simulation.</summary>
+         * <summary>返回模拟的时间步长。</summary>
          *
-         * <returns>The present time step of the simulation.</returns>
+         * <returns>模拟的当前时间步长。</returns>
          */
         public float getTimeStep()
         {
@@ -692,11 +647,9 @@ namespace RVO
         }
 
         /**
-         * <summary>Processes the obstacles that have been added so that they
-         * are accounted for in the simulation.</summary>
+         * <summary>处理已添加的障碍物，以便在模拟中考虑到它们。</summary>
          *
-         * <remarks>Obstacles added to the simulation after this function has
-         * been called are not accounted for in the simulation.</remarks>
+         * <remarks>调用此函数后添加到模拟中的障碍不会在模拟中考虑。</remarks>
          */
         public void processObstacles()
         {
@@ -704,18 +657,13 @@ namespace RVO
         }
 
         /**
-         * <summary>Performs a visibility query between the two specified points
-         * with respect to the obstacles.</summary>
+         * <summary>执行两个指定点之间相对于障碍物的可见性查询。</summary>
          *
-         * <returns>A boolean specifying whether the two points are mutually
-         * visible. Returns true when the obstacles have not been processed.
-         * </returns>
+         * <returns>一个布尔值，指定两个点是否相互可见。 当障碍物尚未处理时返回 true。</returns>
          *
-         * <param name="point1">The first point of the query.</param>
-         * <param name="point2">The second point of the query.</param>
-         * <param name="radius">The minimal distance between the line connecting
-         * the two points and the obstacles in order for the points to be
-         * mutually visible (optional). Must be non-negative.</param>
+         * <param name="point1">询问的第一点。</param>
+         * <param name="point2">询问的第二点。</param>
+         * <param name="radius">连接两点的线与障碍物之间的最小距离，以使点相互可见（可选）。 必须是非负数。</param>
          */
         public bool queryVisibility(Vector2 point1, Vector2 point2, float radius)
         {
@@ -730,36 +678,19 @@ namespace RVO
         }
 
         /**
-         * <summary>Sets the default properties for any new agent that is added.
-         * </summary>
+         * <summary>为添加的任何新代理设置默认属性。 </summary>
          *
-         * <param name="neighborDist">The default maximum distance (center point
-         * to center point) to other agents a new agent takes into account in
-         * the navigation. The larger this number, the longer he running time of
-         * the simulation. If the number is too low, the simulation will not be
-         * safe. Must be non-negative.</param>
-         * <param name="maxNeighbors">The default maximum number of other agents
-         * a new agent takes into account in the navigation. The larger this
-         * number, the longer the running time of the simulation. If the number
-         * is too low, the simulation will not be safe.</param>
-         * <param name="timeHorizon">The default minimal amount of time for
-         * which a new agent's velocities that are computed by the simulation
-         * are safe with respect to other agents. The larger this number, the
-         * sooner an agent will respond to the presence of other agents, but the
-         * less freedom the agent has in choosing its velocities. Must be
-         * positive.</param>
-         * <param name="timeHorizonObst">The default minimal amount of time for
-         * which a new agent's velocities that are computed by the simulation
-         * are safe with respect to obstacles. The larger this number, the
-         * sooner an agent will respond to the presence of obstacles, but the
-         * less freedom the agent has in choosing its velocities. Must be
-         * positive.</param>
-         * <param name="radius">The default radius of a new agent. Must be
-         * non-negative.</param>
-         * <param name="maxSpeed">The default maximum speed of a new agent. Must
-         * be non-negative.</param>
-         * <param name="velocity">The default initial two-dimensional linear
-         * velocity of a new agent.</param>
+         * <param name="neighborDist">新代理在导航中考虑到其他代理的默认最大距离（中心点到中心点）。 
+         * 这个数字越大，模拟的运行时间就越长。 如果数字太低，模拟将不安全。 必须是非负数。</param>
+         * <param name="maxNeighbors">新代理在导航中考虑的其他代理的默认最大数量。 
+         * 该数字越大，模拟的运行时间越长。 如果数字太低，模拟将不安全。</param>
+         * <param name="timeHorizon">通过模拟计算的新代理速度相对于其他代理来说是安全的默认最短时间。 
+         * 这个数字越大，代理对其他代理的存在做出响应的速度就越快，但代理选择其速度的自由度就越小。 必须是正向的。</param>
+         * <param name="timeHorizonObst">通过模拟计算的新代理速度相对于障碍物是安全的默认最短时间。 
+         * 这个数字越大，智能体对障碍物的存在响应越快，但智能体选择速度的自由度就越小。 必须是正向的。</param>
+         * <param name="radius">新代理的默认半径。 必须是非负数。</param>
+         * <param name="maxSpeed">新代理的默认最大速度。 必须是非负数。</param>
+         * <param name="velocity">新代理的默认初始二维线速度。</param>
          */
         public void setAgentDefaults(float neighborDist, int maxNeighbors, float timeHorizon, float timeHorizonObst, float radius, float maxSpeed, Vector2 velocity)
         {
@@ -778,13 +709,10 @@ namespace RVO
         }
 
         /**
-         * <summary>Sets the maximum neighbor count of a specified agent.
-         * </summary>
+         * <summary>设置指定代理的最大邻居计数。</summary>
          *
-         * <param name="agentNo">The number of the agent whose maximum neighbor
-         * count is to be modified.</param>
-         * <param name="maxNeighbors">The replacement maximum neighbor count.
-         * </param>
+         * <param name="agentNo">要修改最大邻居数的Agent的编号。</param>
+         * <param name="maxNeighbors">替换最大邻居数。</param>
          */
         public void setAgentMaxNeighbors(int agentNo, int maxNeighbors)
         {
@@ -792,12 +720,10 @@ namespace RVO
         }
 
         /**
-         * <summary>Sets the maximum speed of a specified agent.</summary>
+         * <summary>设置指定代理的最大速度。</summary>
          *
-         * <param name="agentNo">The number of the agent whose maximum speed is
-         * to be modified.</param>
-         * <param name="maxSpeed">The replacement maximum speed. Must be
-         * non-negative.</param>
+         * <param name="agentNo">需要修改最大速度的代理编号。</param>
+         * <param name="maxSpeed">更换最大速度。 必须是非负的。</param>
          */
         public void setAgentMaxSpeed(int agentNo, float maxSpeed)
         {
@@ -805,13 +731,10 @@ namespace RVO
         }
 
         /**
-         * <summary>Sets the maximum neighbor distance of a specified agent.
-         * </summary>
+         * <summary>设置指定代理的最大邻居距离。</summary>
          *
-         * <param name="agentNo">The number of the agent whose maximum neighbor
-         * distance is to be modified.</param>
-         * <param name="neighborDist">The replacement maximum neighbor distance.
-         * Must be non-negative.</param>
+         * <param name="agentNo">要修改最大邻居距离的Agent的编号。</param>
+         * <param name="neighborDist">替换最大邻居距离。 必须是非负数。</param>
          */
         public void setAgentNeighborDist(int agentNo, float neighborDist)
         {
@@ -819,13 +742,10 @@ namespace RVO
         }
 
         /**
-         * <summary>Sets the two-dimensional position of a specified agent.
-         * </summary>
+         * <summary>设置指定代理的二维位置。</summary>
          *
-         * <param name="agentNo">The number of the agent whose two-dimensional
-         * position is to be modified.</param>
-         * <param name="position">The replacement of the two-dimensional
-         * position.</param>
+         * <param name="agentNo">需要修改二维位置的智能体的编号。</param>
+         * <param name="position">二维位置的替换。</param>
          */
         public void setAgentPosition(int agentNo, Vector2 position)
         {
@@ -833,13 +753,10 @@ namespace RVO
         }
 
         /**
-         * <summary>Sets the two-dimensional preferred velocity of a specified
-         * agent.</summary>
+         * <summary>设置指定代理的二维首选速度。</summary>
          *
-         * <param name="agentNo">The number of the agent whose two-dimensional
-         * preferred velocity is to be modified.</param>
-         * <param name="prefVelocity">The replacement of the two-dimensional
-         * preferred velocity.</param>
+         * <param name="agentNo">要修改二维首选速度的智能体数量。</param>
+         * <param name="prefVelocity">二维首选速度的替换。</param>
          */
         public void setAgentPrefVelocity(int agentNo, Vector2 prefVelocity)
         {
@@ -847,12 +764,10 @@ namespace RVO
         }
 
         /**
-         * <summary>Sets the radius of a specified agent.</summary>
+         * <summary>设置指定代理的半径。</summary>
          *
-         * <param name="agentNo">The number of the agent whose radius is to be
-         * modified.</param>
-         * <param name="radius">The replacement radius. Must be non-negative.
-         * </param>
+         * <param name="agentNo">需要修改半径的代理编号。</param>
+         * <param name="radius">替换半径。 必须是非负数。</param>
          */
         public void setAgentRadius(int agentNo, float radius)
         {
@@ -860,13 +775,10 @@ namespace RVO
         }
 
         /**
-         * <summary>Sets the time horizon of a specified agent with respect to
-         * other agents.</summary>
+         * <summary>设置特定代理相对于其他代理的时间范围。</summary>
          *
-         * <param name="agentNo">The number of the agent whose time horizon is
-         * to be modified.</param>
-         * <param name="timeHorizon">The replacement time horizon with respect
-         * to other agents. Must be positive.</param>
+         * <param name="agentNo">要修改时间范围的代理编号。</param>
+         * <param name="timeHorizon">相对于其他代理的替换时间范围。 必须是正值。</param>
          */
         public void setAgentTimeHorizon(int agentNo, float timeHorizon)
         {
@@ -874,13 +786,10 @@ namespace RVO
         }
 
         /**
-         * <summary>Sets the time horizon of a specified agent with respect to
-         * obstacles.</summary>
+         * <summary>设置指定代理相对于障碍物的时间范围。</summary>
          *
-         * <param name="agentNo">The number of the agent whose time horizon with
-         * respect to obstacles is to be modified.</param>
-         * <param name="timeHorizonObst">The replacement time horizon with
-         * respect to obstacles. Must be positive.</param>
+         * <param name="agentNo">要修改其相对于障碍物的时间范围的代理的数量。</param>
+         * <param name="timeHorizonObst">相对于障碍物的更换时间范围。 必须是正值。</param>
          */
         public void setAgentTimeHorizonObst(int agentNo, float timeHorizonObst)
         {
@@ -888,13 +797,10 @@ namespace RVO
         }
 
         /**
-         * <summary>Sets the two-dimensional linear velocity of a specified
-         * agent.</summary>
+         * <summary>设置指定代理的二维线速度。</summary>
          *
-         * <param name="agentNo">The number of the agent whose two-dimensional
-         * linear velocity is to be modified.</param>
-         * <param name="velocity">The replacement two-dimensional linear
-         * velocity.</param>
+         * <param name="agentNo">需要修改二维线速度的智能体数量。</param>
+         * <param name="velocity">置换二维线速度。</param>
          */
         public void setAgentVelocity(int agentNo, Vector2 velocity)
         {
@@ -902,9 +808,9 @@ namespace RVO
         }
 
         /**
-         * <summary>Sets the global time of the simulation.</summary>
+         * <summary>设置模拟的全局时间。</summary>
          *
-         * <param name="globalTime">The global time of the simulation.</param>
+         * <param name="globalTime">模拟的全局时间。</param>
          */
         public void setGlobalTime(float globalTime)
         {
@@ -912,9 +818,9 @@ namespace RVO
         }
 
         /**
-         * <summary>Sets the number of workers.</summary>
+         * <summary>设置工作者数量。</summary>
          *
-         * <param name="numWorkers">The number of workers.</param>
+         * <param name="numWorkers">工作者数量。</param>
          */
         public void SetNumWorkers(int numWorkers)
         {
@@ -930,10 +836,9 @@ namespace RVO
         }
 
         /**
-         * <summary>Sets the time step of the simulation.</summary>
+         * <summary>设置模拟的时间步长。</summary>
          *
-         * <param name="timeStep">The time step of the simulation. Must be
-         * positive.</param>
+         * <param name="timeStep">模拟的时间步长。必须是正值。</param>
          */
         public void setTimeStep(float timeStep)
         {
@@ -941,7 +846,7 @@ namespace RVO
         }
 
         /**
-         * <summary>Constructs and initializes a simulation.</summary>
+         * <summary>构造并初始化模拟。</summary>
          */
         private Simulator()
         {

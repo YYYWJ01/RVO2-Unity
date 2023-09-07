@@ -33,7 +33,7 @@
 namespace RVO
 {
     /**
-     * <summary>Defines a directed line.</summary>
+     * <summary>定义一条有方向线。</summary>
      */
     public struct Line
     {

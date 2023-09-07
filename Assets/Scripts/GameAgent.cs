@@ -6,11 +6,14 @@ using UnityEngine;
 using Random = System.Random;
 using Vector2 = RVO.Vector2;
 
+/// <summary>
+/// 代理对象
+/// </summary>
 public class GameAgent : MonoBehaviour
 {
     [HideInInspector] public int sid = -1;
 
-    /** Random number generator. */
+    /** 随机数生成器。 */
     private Random m_random = new Random();
     // Use this for initialization
     void Start()
@@ -43,7 +46,7 @@ public class GameAgent : MonoBehaviour
 
         Simulator.Instance.setAgentPrefVelocity(sid, goalVector);
 
-        /* Perturb a little to avoid deadlocks due to perfect symmetry. */
+        /* 稍微扰动一下以避免由于完美对称而导致死锁。 */
         float angle = (float) m_random.NextDouble()*2.0f*(float) Math.PI;
         float dist = (float) m_random.NextDouble()*0.0001f;
 

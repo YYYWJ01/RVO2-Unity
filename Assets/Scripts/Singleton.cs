@@ -30,8 +30,7 @@ public abstract class Singleton<T>
 }
 
 /// <summary>
-/// use InitInstance init not awake or start
-/// support multi scene, you can added SingletonBehaviour in each scene for support run single scene (use same manager.prefab)
+/// 使用InitInstance初始化未唤醒或启动支持多场景，可以在每个场景中添加SingletonBehaviour以支持运行单个场景（使用相同的manager.prefab）
 /// </summary>
 /// <typeparam name="T"></typeparam>
 public abstract class SingletonBehaviour<T> : MonoBehaviour where T : MonoBehaviour
@@ -97,12 +96,10 @@ public abstract class SingletonBehaviour<T> : MonoBehaviour where T : MonoBehavi
     }
 
     /// <summary>
-    /// When Unity quits, it destroys objects in a random order.
-    /// In principle, a Singleton is only destroyed when application quits.
-    /// If any script calls Instance after it have been destroyed, 
-    ///   it will create a buggy ghost object that will stay on the Editor scene
-    ///   even after stopping playing the Application. Really bad!
-    /// So, this was made to be sure we're not creating that buggy ghost object.
+    /// 当Unity退出时，它会以随机顺序销毁对象。 
+    /// 原则上，单例只有在应用程序退出时才会被销毁。 
+    /// 如果任何脚本在销毁后调用 Instance，它将创建一个有缺陷的幽灵对象，即使在停止播放应用程序后，该对象也会保留在编辑器场景中。 
+    /// 特别糟糕！ 所以，这样做是为了确保我们不会创建那个有缺陷的幽灵对象。
     /// </summary>
     public virtual void OnDestroy()
     {

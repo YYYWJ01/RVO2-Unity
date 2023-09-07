@@ -35,23 +35,20 @@ using System;
 namespace RVO
 {
     /**
-     * <summary>Contains functions and constants used in multiple classes.
-     * </summary>
+     * <summary>包含多个类中使用的函数和常量。 </summary>
      */
     public struct RVOMath
     {
         /**
-         * <summary>A sufficiently small positive number.</summary>
+         * <summary>足够小的正数。</summary>
          */
         internal const float RVO_EPSILON = 0.00001f;
 
         /**
-         * <summary>Computes the length of a specified two-dimensional vector.
-         * </summary>
+         * <summary>计算指定二维向量的长度。</summary>
          *
-         * <param name="vector">The two-dimensional vector whose length is to be
-         * computed.</param>
-         * <returns>The length of the two-dimensional vector.</returns>
+         * <param name="vector">要计算其长度的二维矢量。</param>
+         * <returns>二维向量的长度。</returns>
          */
         public static float abs(Vector2 vector)
         {
@@ -59,13 +56,11 @@ namespace RVO
         }
 
         /**
-         * <summary>Computes the squared length of a specified two-dimensional
-         * vector.</summary>
+         * <summary>计算指定二维向量的平方长度。</summary>
          *
-         * <returns>The squared length of the two-dimensional vector.</returns>
+         * <returns>二维向量的长度的平方。</returns>
          *
-         * <param name="vector">The two-dimensional vector whose squared length
-         * is to be computed.</param>
+         * <param name="vector">要计算其平方长度的二维矢量。</param>
          */
         public static float absSq(Vector2 vector)
         {
@@ -73,13 +68,11 @@ namespace RVO
         }
 
         /**
-         * <summary>Computes the normalization of the specified two-dimensional
-         * vector.</summary>
+         * <summary>计算指定二维向量的归一化。</summary>
          *
-         * <returns>The normalization of the two-dimensional vector.</returns>
+         * <returns>二维向量的归一化。</returns>
          *
-         * <param name="vector">The two-dimensional vector whose normalization
-         * is to be computed.</param>
+         * <param name="vector">要计算其归一化的二维向量。</param>
          */
         public static Vector2 normalize(Vector2 vector)
         {
@@ -87,17 +80,15 @@ namespace RVO
         }
 
         /**
-         * <summary>Computes the determinant of a two-dimensional square matrix
-         * with rows consisting of the specified two-dimensional vectors.
-         * </summary>
+         * <summary>计算二维方阵的行列式(叉积)，该方阵的行由指定的二维向量组成。</summary>
          *
-         * <returns>The determinant of the two-dimensional square matrix.
-         * </returns>
+         * 如果叉积为正数，表示向量 vector1 在 vector2 的左侧。
+         * 如果叉积为负数，表示向量 vector1 在 vector2 的右侧。
+         * 如果叉积为零，表示向量 vector1 和 vector2 共线，没有左右关系。
+         * <returns>二维方阵的行列式(叉积)。</returns>
          *
-         * <param name="vector1">The top row of the two-dimensional square
-         * matrix.</param>
-         * <param name="vector2">The bottom row of the two-dimensional square
-         * matrix.</param>
+         * <param name="vector1">二维方阵的顶行。</param>
+         * <param name="vector2">二维方阵的底行。</param>
          */
         internal static float det(Vector2 vector1, Vector2 vector2)
         {
@@ -105,17 +96,13 @@ namespace RVO
         }
 
         /**
-         * <summary>Computes the squared distance from a line segment with the
-         * specified endpoints to a specified point.</summary>
+         * <summary>计算从具有指定端点的线段到指定点的平方距离。</summary>
          *
-         * <returns>The squared distance from the line segment to the point.
-         * </returns>
+         * <returns>从线段到点的距离的平方。</returns>
          *
-         * <param name="vector1">The first endpoint of the line segment.</param>
-         * <param name="vector2">The second endpoint of the line segment.
-         * </param>
-         * <param name="vector3">The point to which the squared distance is to
-         * be calculated.</param>
+         * <param name="vector1">线段的第一个端点。</param>
+         * <param name="vector2">线段的第二个端点。</param>
+         * <param name="vector3">要计算平方距离的点。</param>
          */
         internal static float distSqPointLineSegment(Vector2 vector1, Vector2 vector2, Vector2 vector3)
         {
@@ -135,12 +122,11 @@ namespace RVO
         }
 
         /**
-         * <summary>Computes the absolute value of a float.</summary>
+         * <summary>计算浮点数的绝对值。</summary>
          *
-         * <returns>The absolute value of the float.</returns>
+         * <returns>浮点数的绝对值。</returns>
          *
-         * <param name="scalar">The float of which to compute the absolute
-         * value.</param>
+         * <param name="scalar">要计算其绝对值的浮点数。</param>
          */
         internal static float fabs(float scalar)
         {
@@ -148,16 +134,13 @@ namespace RVO
         }
 
         /**
-         * <summary>Computes the signed distance from a line connecting the
-         * specified points to a specified point.</summary>
+         * <summary>计算从连接指定点的直线到指定点的有符号距离。</summary>
          *
-         * <returns>Positive when the point c lies to the left of the line ab.
-         * </returns>
+         * <returns>当点 c 位于线 ab 的左侧时为正值。右侧时为负值。在线段上则为0 </returns>
          *
-         * <param name="a">The first point on the line.</param>
-         * <param name="b">The second point on the line.</param>
-         * <param name="c">The point to which the signed distance is to be
-         * calculated.</param>
+         * <param name="a">线上的第一个点。</param>
+         * <param name="b">线上的第二个点。</param>
+         * <param name="c">要计算符号距离的点。</param>
          */
         internal static float leftOf(Vector2 a, Vector2 b, Vector2 c)
         {
@@ -165,11 +148,11 @@ namespace RVO
         }
 
         /**
-         * <summary>Computes the square of a float.</summary>
+         * <summary>计算浮点数的平方。</summary>
          *
-         * <returns>The square of the float.</returns>
+         * <returns>浮点数的平方。</returns>
          *
-         * <param name="scalar">The float to be squared.</param>
+         * <param name="scalar">要平方的浮点数。</param>
          */
         internal static float sqr(float scalar)
         {
@@ -177,12 +160,11 @@ namespace RVO
         }
 
         /**
-         * <summary>Computes the square root of a float.</summary>
+         * <summary>计算浮点数的平方根。</summary>
          *
-         * <returns>The square root of the float.</returns>
+         * <returns>浮点数的平方根。</returns>
          *
-         * <param name="scalar">The float of which to compute the square root.
-         * </param>
+         * <param name="scalar">要计算其平方根的浮点数。 </param>
          */
         internal static float sqrt(float scalar)
         {
