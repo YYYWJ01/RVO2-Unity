@@ -122,11 +122,29 @@ namespace RVO
 
         private static Simulator instance_ = new Simulator();
 
+        /// <summary>
+        /// 默认代理
+        /// </summary>
         private Agent defaultAgent_;
+        /// <summary>
+        /// 完成事件列表
+        /// </summary>
         private ManualResetEvent[] doneEvents_;
+        /// <summary>
+        /// 工作者列表
+        /// </summary>
         private Worker[] workers_;
+        /// <summary>
+        /// 工作者数量
+        /// </summary>
         private int numWorkers_;
+        /// <summary>
+        /// 工作者代理数量
+        /// </summary>
         private int workerAgentCount_;
+        /// <summary>
+        /// 全局时间
+        /// </summary>
         private float globalTime_;
 
         public static Simulator Instance
@@ -137,11 +155,18 @@ namespace RVO
             }
         }
 
+        /// <summary>
+        /// 删除代理
+        /// </summary>
+        /// <param name="agentNo"></param>
         public void delAgent(int agentNo)
         {
             agents_[agentNo2indexDict_[agentNo]].needDelete_ = true;
         }
 
+        /// <summary>
+        /// 更新删除代理
+        /// </summary>
         void updateDeleteAgent()
         {
             bool isDelete = false;
@@ -341,6 +366,7 @@ namespace RVO
          */
         public float doStep()
         {
+            // 删除不再需要的代理（Agent）
             updateDeleteAgent();
 
             if (workers_ == null)
@@ -755,7 +781,7 @@ namespace RVO
         /**
          * <summary>设置指定代理的二维首选速度。</summary>
          *
-         * <param name="agentNo">要修改二维首选速度的智能体数量。</param>
+         * <param name="agentNo">要修改二维首选速度的智能体Id。</param>
          * <param name="prefVelocity">二维首选速度的替换。</param>
          */
         public void setAgentPrefVelocity(int agentNo, Vector2 prefVelocity)

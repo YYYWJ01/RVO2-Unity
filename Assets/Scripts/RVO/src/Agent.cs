@@ -40,15 +40,37 @@ namespace RVO
      */
     internal class Agent
     {
+        /// <summary>
+        /// 代理邻居列表
+        /// </summary>
+        /// <returns></returns>
         internal IList<KeyValuePair<float, Agent>> agentNeighbors_ = new List<KeyValuePair<float, Agent>>();
+        /// <summary>
+        /// 障碍邻居列表
+        /// </summary>
+        /// <returns></returns>
         internal IList<KeyValuePair<float, Obstacle>> obstacleNeighbors_ = new List<KeyValuePair<float, Obstacle>>();
+        /// <summary>
+        /// OCRA线列表
+        /// </summary>
+        /// <typeparam name="Line"></typeparam>
+        /// <returns></returns>
         internal IList<Line> orcaLines_ = new List<Line>();
+        /// <summary>
+        /// 代理位置
+        /// </summary>
         internal Vector2 position_;
+        /// <summary>
+        /// 首选速度
+        /// </summary>
         internal Vector2 prefVelocity_;
         /// <summary>
         /// 新代理的默认初始二维线速度。
         /// </summary>
         internal Vector2 velocity_;
+        /// <summary>
+        /// 代理Id
+        /// </summary>
         internal int id_ = 0;
         /// <summary>
         /// 新代理在导航中考虑的其他代理的默认最大数量。该数字越大，模拟的运行时间越长。 如果数字太低，模拟将不安全。
@@ -74,12 +96,17 @@ namespace RVO
         /// 通过模拟计算的新代理速度相对于障碍物是安全的默认最短时间。这个数字越大，智能体对障碍物的存在响应越快，但智能体选择速度的自由度就越小。必须是正向的。
         /// </summary>
         internal float timeHorizonObst_ = 0.0f;
+        /// <summary>
+        /// 需要删除状态
+        /// </summary>
         internal bool needDelete_ = false;
-
+        /// <summary>
+        /// 新速度
+        /// </summary>
         private Vector2 newVelocity_;
 
         /**
-         * <summary>Computes the neighbors of this agent.</summary>
+         * <summary>计算该代理的邻居。</summary>
          */
         internal void computeNeighbors()
         {
@@ -97,7 +124,7 @@ namespace RVO
         }
 
         /**
-         * <summary>Computes the new velocity of this agent.</summary>
+         * <summary>计算这个代理的新速度。</summary>
          */
         internal void computeNewVelocity()
         {
@@ -105,7 +132,7 @@ namespace RVO
 
             float invTimeHorizonObst = 1.0f / timeHorizonObst_;
 
-            /* Create obstacle ORCA lines. */
+            /* 制造障碍ORCA线。 */
             for (int i = 0; i < obstacleNeighbors_.Count; ++i)
             {
 
@@ -116,8 +143,7 @@ namespace RVO
                 Vector2 relativePosition2 = obstacle2.point_ - position_;
 
                 /*
-                 * Check if velocity obstacle of obstacle is already taken care
-                 * of by previously constructed obstacle ORCA lines.
+                 * 检查障碍物的速度障碍是否已经被先前构建的障碍物ORCA线处理过。
                  */
                 bool alreadyCovered = false;
 
@@ -136,7 +162,7 @@ namespace RVO
                     continue;
                 }
 
-                /* Not yet covered. Check for collisions. */
+                /* 尚未覆盖。检查碰撞。 */
                 float distSq1 = RVOMath.absSq(relativePosition1);
                 float distSq2 = RVOMath.absSq(relativePosition2);
 
@@ -150,7 +176,7 @@ namespace RVO
 
                 if (s < 0.0f && distSq1 <= radiusSq)
                 {
-                    /* Collision with left vertex. Ignore if non-convex. */
+                    /* 与左顶点的碰撞。忽略非凸。 */
                     if (obstacle1.convex_)
                     {
                         line.point = new Vector2(0.0f, 0.0f);
@@ -163,8 +189,7 @@ namespace RVO
                 else if (s > 1.0f && distSq2 <= radiusSq)
                 {
                     /*
-                     * Collision with right vertex. Ignore if non-convex or if
-                     * it will be taken care of by neighboring obstacle.
+                     * 与右顶点的碰撞。如果它是非凸的，或者如果它会被邻近的障碍物处理，请忽略。
                      */
                     if (obstacle2.convex_ && RVOMath.det(relativePosition2, obstacle2.direction_) >= 0.0f)
                     {
@@ -177,7 +202,7 @@ namespace RVO
                 }
                 else if (s >= 0.0f && s < 1.0f && distSqLine <= radiusSq)
                 {
-                    /* Collision with obstacle segment. */
+                    /* 与障碍物段的碰撞。 */
                     line.point = new Vector2(0.0f, 0.0f);
                     line.direction = -obstacle1.direction_;
                     orcaLines_.Add(line);
@@ -186,9 +211,7 @@ namespace RVO
                 }
 
                 /*
-                 * No collision. Compute legs. When obliquely viewed, both legs
-                 * can come from a single vertex. Legs extend cut-off line when
-                 * non-convex vertex.
+                 * 没有碰撞。 计算腿。 当倾斜观察时，两条腿可以来自同一个顶点。 当非凸顶点时，腿延伸截止线。
                  */
 
                 Vector2 leftLegDirection, rightLegDirection;
@@ -196,12 +219,11 @@ namespace RVO
                 if (s < 0.0f && distSqLine <= radiusSq)
                 {
                     /*
-                     * Obstacle viewed obliquely so that left vertex
-                     * defines velocity obstacle.
+                     * 倾斜观察障碍物，以便左顶点定义速度障碍物。
                      */
                     if (!obstacle1.convex_)
                     {
-                        /* Ignore obstacle. */
+                        /* 忽略障碍。 */
                         continue;
                     }
 
@@ -214,12 +236,11 @@ namespace RVO
                 else if (s > 1.0f && distSqLine <= radiusSq)
                 {
                     /*
-                     * Obstacle viewed obliquely so that
-                     * right vertex defines velocity obstacle.
+                     * 倾斜地观察障碍物，以便右顶点定义速度障碍物。
                      */
                     if (!obstacle2.convex_)
                     {
-                        /* Ignore obstacle. */
+                        /* 忽略障碍。 */
                         continue;
                     }
 
@@ -231,7 +252,7 @@ namespace RVO
                 }
                 else
                 {
-                    /* Usual situation. */
+                    /* 通常情况。 */
                     if (obstacle1.convex_)
                     {
                         float leg1 = RVOMath.sqrt(distSq1 - radiusSq);
@@ -239,7 +260,7 @@ namespace RVO
                     }
                     else
                     {
-                        /* Left vertex non-convex; left leg extends cut-off line. */
+                        /* 左顶点非凸； 左腿延伸截止线。 */
                         leftLegDirection = -obstacle1.direction_;
                     }
 
@@ -250,15 +271,13 @@ namespace RVO
                     }
                     else
                     {
-                        /* Right vertex non-convex; right leg extends cut-off line. */
+                        /* 右顶点非凸； 右腿延伸截止线。 */
                         rightLegDirection = obstacle1.direction_;
                     }
                 }
 
                 /*
-                 * Legs can never point into neighboring edge when convex
-                 * vertex, take cutoff-line of neighboring edge instead. If
-                 * velocity projected on "foreign" leg, no constraint is added.
+                 * 当凸顶点时，腿不能指向相邻边，而是取相邻边的截止线。 如果速度投射在“外”腿上，则不添加任何约束。
                  */
 
                 Obstacle leftNeighbor = obstacle1.previous_;
@@ -268,33 +287,33 @@ namespace RVO
 
                 if (obstacle1.convex_ && RVOMath.det(leftLegDirection, -leftNeighbor.direction_) >= 0.0f)
                 {
-                    /* Left leg points into obstacle. */
+                    /* 左腿指向障碍物。 */
                     leftLegDirection = -leftNeighbor.direction_;
                     isLeftLegForeign = true;
                 }
 
                 if (obstacle2.convex_ && RVOMath.det(rightLegDirection, obstacle2.direction_) <= 0.0f)
                 {
-                    /* Right leg points into obstacle. */
+                    /* 右腿指向障碍物。 */
                     rightLegDirection = obstacle2.direction_;
                     isRightLegForeign = true;
                 }
 
-                /* Compute cut-off centers. */
+                /* 计算截止中心。 */
                 Vector2 leftCutOff = invTimeHorizonObst * (obstacle1.point_ - position_);
                 Vector2 rightCutOff = invTimeHorizonObst * (obstacle2.point_ - position_);
                 Vector2 cutOffVector = rightCutOff - leftCutOff;
 
-                /* Project current velocity on velocity obstacle. */
+                /* 将当前速度投影到速度障碍物上。 */
 
-                /* Check if current velocity is projected on cutoff circles. */
+                /* 检查当前速度是否投影在截止圆上。 */
                 float t = obstacle1 == obstacle2 ? 0.5f : ((velocity_ - leftCutOff) * cutOffVector) / RVOMath.absSq(cutOffVector);
                 float tLeft = (velocity_ - leftCutOff) * leftLegDirection;
                 float tRight = (velocity_ - rightCutOff) * rightLegDirection;
 
                 if ((t < 0.0f && tLeft < 0.0f) || (obstacle1 == obstacle2 && tLeft < 0.0f && tRight < 0.0f))
                 {
-                    /* Project on left cut-off circle. */
+                    /* 投影在左侧截止圆上。 */
                     Vector2 unitW = RVOMath.normalize(velocity_ - leftCutOff);
 
                     line.direction = new Vector2(unitW.y(), -unitW.x());
@@ -305,7 +324,7 @@ namespace RVO
                 }
                 else if (t > 1.0f && tRight < 0.0f)
                 {
-                    /* Project on right cut-off circle. */
+                    /* 投影在右截止圆上。 */
                     Vector2 unitW = RVOMath.normalize(velocity_ - rightCutOff);
 
                     line.direction = new Vector2(unitW.y(), -unitW.x());
@@ -316,8 +335,7 @@ namespace RVO
                 }
 
                 /*
-                 * Project on left leg, right leg, or cut-off line, whichever is
-                 * closest to velocity.
+                 * 投射到左腿、右腿或明暗截止线上，以最接近速度的为准。
                  */
                 float distSqCutoff = (t < 0.0f || t > 1.0f || obstacle1 == obstacle2) ? float.PositiveInfinity : RVOMath.absSq(velocity_ - (leftCutOff + t * cutOffVector));
                 float distSqLeft = tLeft < 0.0f ? float.PositiveInfinity : RVOMath.absSq(velocity_ - (leftCutOff + tLeft * leftLegDirection));
@@ -325,7 +343,7 @@ namespace RVO
 
                 if (distSqCutoff <= distSqLeft && distSqCutoff <= distSqRight)
                 {
-                    /* Project on cut-off line. */
+                    /* 计划在截止线上。 */
                     line.direction = -obstacle1.direction_;
                     line.point = leftCutOff + radius_ * invTimeHorizonObst * new Vector2(-line.direction.y(), line.direction.x());
                     orcaLines_.Add(line);
@@ -335,7 +353,7 @@ namespace RVO
 
                 if (distSqLeft <= distSqRight)
                 {
-                    /* Project on left leg. */
+                    /* 计划在左腿上。 */
                     if (isLeftLegForeign)
                     {
                         continue;
@@ -348,7 +366,7 @@ namespace RVO
                     continue;
                 }
 
-                /* Project on right leg. */
+                /* 计划在右腿上。 */
                 if (isRightLegForeign)
                 {
                     continue;
@@ -363,7 +381,7 @@ namespace RVO
 
             float invTimeHorizon = 1.0f / timeHorizon_;
 
-            /* Create agent ORCA lines. */
+            /* 创建 ORCA 代理线。 */
             for (int i = 0; i < agentNeighbors_.Count; ++i)
             {
                 Agent other = agentNeighbors_[i].Value;
@@ -379,16 +397,16 @@ namespace RVO
 
                 if (distSq > combinedRadiusSq)
                 {
-                    /* No collision. */
+                    /* 没有碰撞。 */
                     Vector2 w = relativeVelocity - invTimeHorizon * relativePosition;
 
-                    /* Vector from cutoff center to relative velocity. */
+                    /* 从截止中心到相对速度的矢量。 */
                     float wLengthSq = RVOMath.absSq(w);
                     float dotProduct1 = w * relativePosition;
 
                     if (dotProduct1 < 0.0f && RVOMath.sqr(dotProduct1) > combinedRadiusSq * wLengthSq)
                     {
-                        /* Project on cut-off circle. */
+                        /* 投影在截止圆上。 */
                         float wLength = RVOMath.sqrt(wLengthSq);
                         Vector2 unitW = w / wLength;
 
@@ -397,17 +415,17 @@ namespace RVO
                     }
                     else
                     {
-                        /* Project on legs. */
+                        /* 计划在腿上。 */
                         float leg = RVOMath.sqrt(distSq - combinedRadiusSq);
 
                         if (RVOMath.det(relativePosition, w) > 0.0f)
                         {
-                            /* Project on left leg. */
+                            /* 计划在左腿上。 */
                             line.direction = new Vector2(relativePosition.x() * leg - relativePosition.y() * combinedRadius, relativePosition.x() * combinedRadius + relativePosition.y() * leg) / distSq;
                         }
                         else
                         {
-                            /* Project on right leg. */
+                            /* 项目在右腿上。 */
                             line.direction = -new Vector2(relativePosition.x() * leg + relativePosition.y() * combinedRadius, -relativePosition.x() * combinedRadius + relativePosition.y() * leg) / distSq;
                         }
 
@@ -417,10 +435,10 @@ namespace RVO
                 }
                 else
                 {
-                    /* Collision. Project on cut-off circle of time timeStep. */
+                    /* 碰撞。 投影时间 timeStep 的截止圈。 */
                     float invTimeStep = 1.0f / Simulator.Instance.timeStep_;
 
-                    /* Vector from cutoff center to relative velocity. */
+                    /* 从截止中心到相对速度的矢量。 */
                     Vector2 w = relativeVelocity - invTimeStep * relativePosition;
 
                     float wLength = RVOMath.abs(w);
@@ -443,11 +461,10 @@ namespace RVO
         }
 
         /**
-         * <summary>Inserts an agent neighbor into the set of neighbors of this
-         * agent.</summary>
+         * <summary>将代理邻居插入到该代理的邻居集中。</summary>
          *
-         * <param name="agent">A pointer to the agent to be inserted.</param>
-         * <param name="rangeSq">The squared range around this agent.</param>
+         * <param name="agent">指向要插入的代理的指针。</param>
+         * <param name="rangeSq">该主体周围的平方范围。</param>
          */
         internal void insertAgentNeighbor(Agent agent, ref float rangeSq)
         {

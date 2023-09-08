@@ -157,7 +157,7 @@ namespace RVO
         private ObstacleTreeNode obstacleTree_;
 
         /**
-         * <summary>Builds an agent k-D tree.</summary>
+         * <summary>构建一个代理k-D树。</summary>
          */
         internal void buildAgentTree()
         {
@@ -217,12 +217,10 @@ namespace RVO
         }
 
         /**
-         * <summary>Computes the obstacle neighbors of the specified agent.
-         * </summary>
+         * <summary>计算指定代理的障碍物邻居。</summary>
          *
-         * <param name="agent">The agent for which obstacle neighbors are to be
-         * computed.</param>
-         * <param name="rangeSq">The squared range around the agent.</param>
+         * <param name="agent">要计算障碍邻居的代理。</param>
+         * <param name="rangeSq">代理周围的平方范围。</param>
          */
         internal void computeObstacleNeighbors(Agent agent, float rangeSq)
         {
@@ -230,18 +228,13 @@ namespace RVO
         }
 
         /**
-         * <summary>Queries the visibility between two points within a specified
-         * radius.</summary>
+         * <summary>查询指定半径内两点之间的可见性。</summary>
          *
-         * <returns>True if q1 and q2 are mutually visible within the radius;
-         * false otherwise.</returns>
+         * <returns>如果 q1 和 q2 在半径内相互可见，则为 True； 否则为假。</returns>
          *
-         * <param name="q1">The first point between which visibility is to be
-         * tested.</param>
-         * <param name="q2">The second point between which visibility is to be
-         * tested.</param>
-         * <param name="radius">The radius within which visibility is to be
-         * tested.</param>
+         * <param name="q1">要测试可见性的第一个点。</param>
+         * <param name="q2">要测试其可见性的第二点。</param>
+         * <param name="radius">要测试能见度的半径。</param>
          */
         internal bool queryVisibility(Vector2 q1, Vector2 q2, float radius)
         {
@@ -259,12 +252,11 @@ namespace RVO
         }
 
         /**
-         * <summary>Recursive method for building an agent k-D tree.</summary>
+         * <summary>构建代理k-D树的递归方法。</summary>
          *
-         * <param name="begin">The beginning agent k-D tree node node index.
-         * </param>
-         * <param name="end">The ending agent k-D tree node index.</param>
-         * <param name="node">The current agent k-D tree node index.</param>
+         * <param name="begin">开始代理k-D树节点节点索引。</param>
+         * <param name="end">结束代理 k-D树节点索引。</param>
+         * <param name="node">当前代理k-D树节点索引。</param>
          */
         private void buildAgentTreeRecursive(int begin, int end, int node)
         {
@@ -283,7 +275,7 @@ namespace RVO
 
             if (end - begin > MAX_LEAF_SIZE)
             {
-                /* No leaf node. */
+                /* 无叶节点。 */
                 bool isVertical = agentTree_[node].maxX_ - agentTree_[node].minX_ > agentTree_[node].maxY_ - agentTree_[node].minY_;
                 float splitValue = 0.5f * (isVertical ? agentTree_[node].maxX_ + agentTree_[node].minX_ : agentTree_[node].maxY_ + agentTree_[node].minY_);
 
@@ -573,13 +565,11 @@ namespace RVO
         }
 
         /**
-         * <summary>Recursive method for computing the agent neighbors of the
-         * specified agent.</summary>
+         * <summary>用于计算指定代理的代理邻居的递归方法。</summary>
          *
-         * <param name="agent">The agent for which agent neighbors are to be
-         * computed.</param>
-         * <param name="rangeSq">The squared range around the agent.</param>
-         * <param name="node">The current agent k-D tree node index.</param>
+         * <param name="agent">要计算代理邻居的代理。</param>
+         * <param name="rangeSq">代理周围的平方范围。</param>
+         * <param name="node">当前代理的k-D树节点索引。</param>
          */
         private void queryAgentTreeRecursive(Agent agent, ref float rangeSq, int node)
         {
@@ -624,13 +614,11 @@ namespace RVO
         }
 
         /**
-         * <summary>Recursive method for computing the obstacle neighbors of the
-         * specified agent.</summary>
+         * <summary>一种计算指定代理障碍物邻域的递归方法。</summary>
          *
-         * <param name="agent">The agent for which obstacle neighbors are to be
-         * computed.</param>
-         * <param name="rangeSq">The squared range around the agent.</param>
-         * <param name="node">The current obstacle k-D node.</param>
+         * <param name="agent">要计算障碍邻居的代理。</param>
+         * <param name="rangeSq">代理周围的平方范围。</param>
+         * <param name="node">当前障碍k-D节点。</param>
          */
         private void queryObstacleTreeRecursive(Agent agent, float rangeSq, ObstacleTreeNode node)
         {
@@ -650,32 +638,26 @@ namespace RVO
                     if (agentLeftOfLine < 0.0f)
                     {
                         /*
-                         * Try obstacle at this node only if agent is on right side of
-                         * obstacle (and can see obstacle).
+                         * 只有当代理在障碍物的右侧(并且可以看到障碍物)时才尝试在该节点设置障碍物。
                          */
                         agent.insertObstacleNeighbor(node.obstacle_, rangeSq);
                     }
 
-                    /* Try other side of line. */
+                    /* 试试线的另一边。 */
                     queryObstacleTreeRecursive(agent, rangeSq, agentLeftOfLine >= 0.0f ? node.right_ : node.left_);
                 }
             }
         }
 
         /**
-         * <summary>Recursive method for querying the visibility between two
-         * points within a specified radius.</summary>
+         * <summary>用于查询指定半径内两点之间的可见性的递归方法。</summary>
          *
-         * <returns>True if q1 and q2 are mutually visible within the radius;
-         * false otherwise.</returns>
+         * <returns>如果 q1 和 q2 在半径内相互可见，则为 True； 否则为假。</returns>
          *
-         * <param name="q1">The first point between which visibility is to be
-         * tested.</param>
-         * <param name="q2">The second point between which visibility is to be
-         * tested.</param>
-         * <param name="radius">The radius within which visibility is to be
-         * tested.</param>
-         * <param name="node">The current obstacle k-D node.</param>
+         * <param name="q1">要测试可见性的第一个点。</param>
+         * <param name="q2">要测试其可见性的第二点。</param>
+         * <param name="radius">要测试能见度的半径。</param>
+         * <param name="node">当前障碍物k-D节点。</param>
          */
         private bool queryVisibilityRecursive(Vector2 q1, Vector2 q2, float radius, ObstacleTreeNode node)
         {
@@ -703,7 +685,7 @@ namespace RVO
 
             if (q1LeftOfI >= 0.0f && q2LeftOfI <= 0.0f)
             {
-                /* One can see through obstacle from left to right. */
+                /* 可以从左向右看穿障碍物。 */
                 return queryVisibilityRecursive(q1, q2, radius, node.left_) && queryVisibilityRecursive(q1, q2, radius, node.right_);
             }
 

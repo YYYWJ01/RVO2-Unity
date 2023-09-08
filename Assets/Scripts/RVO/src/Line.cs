@@ -37,7 +37,13 @@ namespace RVO
      */
     public struct Line
     {
+        /// <summary>
+        /// 方向
+        /// </summary>
         public Vector2 direction;
+        /// <summary>
+        /// 位置点
+        /// </summary>
         public Vector2 point;
     }
 }
