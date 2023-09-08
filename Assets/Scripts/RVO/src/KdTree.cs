@@ -32,6 +32,7 @@
 
 using System.Collections.Generic;
 using System;
+using UnityEngine;
 
 namespace RVO
 {
@@ -151,9 +152,18 @@ namespace RVO
          * <summary>代理 k-D 树叶的最大尺寸。</summary>
          */
         private const int MAX_LEAF_SIZE = 10;
-
+        
+        /// <summary>
+        /// 代理列表
+        /// </summary>
         private Agent[] agents_;
+        /// <summary>
+        /// 代理树
+        /// </summary>
         private AgentTreeNode[] agentTree_;
+        /// <summary>
+        /// 障碍物树
+        /// </summary>
         private ObstacleTreeNode obstacleTree_;
 
         /**

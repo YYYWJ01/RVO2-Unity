@@ -366,22 +366,27 @@ namespace RVO
          */
         public float doStep()
         {
-            // 删除不再需要的代理（Agent）
+            // 更新并删除代理
             updateDeleteAgent();
 
+            // 检查是否已经创建了工作线程。如果还没有创建，就会为模拟中的每个工作线程创建一个相关的工作者对象，并为每个工作者对象分配一段代理。
             if (workers_ == null)
             {
+                // 初始化工作者线程数组
                 workers_ = new Worker[numWorkers_];
                 doneEvents_ = new ManualResetEvent[workers_.Length];
                 workerAgentCount_ = getNumAgents();
 
+                // 为每个工作者线程创建一个 ManualResetEvent
                 for (int block = 0; block < workers_.Length; ++block)
                 {
                     doneEvents_[block] = new ManualResetEvent(false);
+                    // 创建一个 Worker 对象，并为其分配一段代理
                     workers_[block] = new Worker(block * getNumAgents() / workers_.Length, (block + 1) * getNumAgents() / workers_.Length, doneEvents_[block]);
                 }
             }
 
+            // 如果代理数量发生变化，更新工作者线程的分配
             if (workerAgentCount_ != getNumAgents())
             {
                 workerAgentCount_ = getNumAgents();
@@ -391,26 +396,35 @@ namespace RVO
                 }
             }
 
+            // 构建代理树
             kdTree_.buildAgentTree();
 
+            // 遍历模拟中的所有工作者线程。每个工作者线程负责处理一部分代理。
             for (int block = 0; block < workers_.Length; ++block)
             {
+                // 重置工作者线程的 ManualResetEvent
                 doneEvents_[block].Reset();
+                // 将工作者线程的步骤排入线程池，以在后台线程中执行
                 ThreadPool.QueueUserWorkItem(workers_[block].step);
             }
 
+            // 等待所有工作者线程完成其工作。它使用 doneEvents_ 数组中的事件来等待线程完成。
             WaitHandle.WaitAll(doneEvents_);
 
+            // 重置工作者线程的 ManualResetEvent
             for (int block = 0; block < workers_.Length; ++block)
             {
                 doneEvents_[block].Reset();
+                // 将工作者线程的更新排入线程池，以在后台线程中执行
                 ThreadPool.QueueUserWorkItem(workers_[block].update);
             }
 
+            // 等待所有工作者线程完成其更新
             WaitHandle.WaitAll(doneEvents_);
 
+            // 增加全局时间，通常用于推进模拟的时间步长
             globalTime_ += timeStep_;
-
+            
             return globalTime_;
         }
 
