@@ -45,7 +45,7 @@ namespace RVO
 {
     class Circle
     {
-        /* Store the goals of the agents. */
+        /* 存储代理的目标。 */
         IList<Vector2> goals;
 
         Circle()
@@ -55,18 +55,16 @@ namespace RVO
 
         void setupScenario()
         {
-            /* Specify the global time step of the simulation. */
+            /* 指定模拟的全局时间步长。 */
             Simulator.Instance.setTimeStep(0.25f);
 
             /*
-             * Specify the default parameters for agents that are subsequently
-             * added.
+             * 为随后添加的代理指定默认参数。
              */
             Simulator.Instance.setAgentDefaults(15.0f, 10, 10.0f, 10.0f, 1.5f, 2.0f, new Vector2(0.0f, 0.0f));
 
             /*
-             * Add agents, specifying their start position, and store their
-             * goals on the opposite side of the environment.
+             * 添加代理，指定其起始位置，并将其目标存储在环境的另一侧。
              */
             for (int i = 0; i < 250; ++i)
             {
@@ -80,10 +78,10 @@ namespace RVO
         #if RVO_OUTPUT_TIME_AND_POSITIONS
         void updateVisualization()
         {
-            /* Output the current global time. */
+            /* 输出当前的全局时间。 */
             Console.Write(Simulator.Instance.getGlobalTime());
 
-            /* Output the current position of all the agents. */
+            /* 输出所有智能体的当前位置。 */
             for (int i = 0; i < Simulator.Instance.getNumAgents(); ++i)
             {
                 Console.Write(" {0}", Simulator.Instance.getAgentPosition(i));
@@ -96,8 +94,7 @@ namespace RVO
         void setPreferredVelocities()
         {
             /*
-             * Set the preferred velocity to be a vector of unit magnitude
-             * (speed) in the direction of the goal.
+             * 将首选速度设置为目标方向上单位幅度（速度）的向量。
              */
             for (int i = 0; i < Simulator.Instance.getNumAgents(); ++i)
             {
@@ -114,7 +111,7 @@ namespace RVO
 
         bool reachedGoal()
         {
-            /* Check if all agents have reached their goals. */
+            /* 检查所有代理是否都达到了目标。 */
             for (int i = 0; i < Simulator.Instance.getNumAgents(); ++i)
             {
                 if (RVOMath.absSq(Simulator.Instance.getAgentPosition(i) - goals[i]) > Simulator.Instance.getAgentRadius(i) * Simulator.Instance.getAgentRadius(i))
@@ -129,10 +126,10 @@ namespace RVO
         {
             Circle circle = new Circle();
 
-            /* Set up the scenario. */
+            /* 设置场景。 */
             circle.setupScenario();
 
-            /* Perform (and manipulate) the simulation. */
+            /* 执行（并操纵）模拟。 */
             do
             {
                 #if RVO_OUTPUT_TIME_AND_POSITIONS

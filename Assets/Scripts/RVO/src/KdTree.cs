@@ -637,23 +637,26 @@ namespace RVO
                 Obstacle obstacle1 = node.obstacle_;
                 Obstacle obstacle2 = obstacle1.next_;
 
+                // 检测该代理是否在 obstacle1 和 obstacle2 连线的左边（>=0）or 右边（<0）
                 float agentLeftOfLine = RVOMath.leftOf(obstacle1.point_, obstacle2.point_, agent.position_);
-
+                
+                // 递归地调用自己两次，一次处理位于 agent 左侧的子树，另一次处理位于右侧的子树。这是因为代理的邻居可能分布在障碍物的两侧。
                 queryObstacleTreeRecursive(agent, rangeSq, agentLeftOfLine >= 0.0f ? node.left_ : node.right_);
 
+                // 计算代理到障碍物连线的距离的平方 distSqLine。这个距离的计算基于代理相对于障碍物的位置。
                 float distSqLine = RVOMath.sqr(agentLeftOfLine) / RVOMath.absSq(obstacle2.point_ - obstacle1.point_);
 
+                // 计算代理到障碍物连线的距离的平方 distSqLine。这个距离的计算基于代理相对于障碍物的位置。
                 if (distSqLine < rangeSq)
                 {
                     if (agentLeftOfLine < 0.0f)
                     {
-                        /*
-                         * 只有当代理在障碍物的右侧(并且可以看到障碍物)时才尝试在该节点设置障碍物。
-                         */
+                        /* 只有当代理在障碍物的右侧(并且可以看到障碍物)时才尝试在该节点设置障碍物。*/
                         agent.insertObstacleNeighbor(node.obstacle_, rangeSq);
                     }
 
                     /* 试试线的另一边。 */
+                    // 继续递归调用自己，一次处理与代理位于障碍物连线的另一侧的子树。这确保了所有位于查询范围内的障碍物都被考虑。
                     queryObstacleTreeRecursive(agent, rangeSq, agentLeftOfLine >= 0.0f ? node.right_ : node.left_);
                 }
             }

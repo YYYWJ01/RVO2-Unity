@@ -47,10 +47,10 @@ namespace RVO
 {
     class Blocks
     {
-        /* Store the goals of the agents. */
+        /* 存储代理的目标。 */
         IList<Vector2> goals;
 
-        /** Random number generator. */
+        /** 随机数生成器。 */
         Random random;
 
         Blocks()
@@ -66,18 +66,16 @@ namespace RVO
 
         void setupScenario()
         {
-            /* Specify the global time step of the simulation. */
+            /* 指定模拟的全局时间步长。 */
             Simulator.Instance.setTimeStep(0.25f);
 
             /*
-             * Specify the default parameters for agents that are subsequently
-             * added.
+             * 为随后添加的代理指定默认参数。
              */
             Simulator.Instance.setAgentDefaults(15.0f, 10, 5.0f, 5.0f, 2.0f, 2.0f, new Vector2(0.0f, 0.0f));
 
             /*
-             * Add agents, specifying their start position, and store their
-             * goals on the opposite side of the environment.
+             * 添加代理，指定其起始位置，并将其目标存储在环境的另一侧。
              */
             for (int i = 0; i < 5; ++i)
             {
@@ -98,8 +96,7 @@ namespace RVO
             }
 
             /*
-             * Add (polygonal) obstacles, specifying their vertices in
-             * counterclockwise order.
+             * 添加（多边形）障碍物，按逆时针顺序指定其顶点。
              */
             IList<Vector2> obstacle1 = new List<Vector2>();
             obstacle1.Add(new Vector2(-10.0f, 40.0f));
@@ -130,8 +127,7 @@ namespace RVO
             Simulator.Instance.addObstacle(obstacle4);
 
             /*
-             * Process the obstacles so that they are accounted for in the
-             * simulation.
+             * 处理障碍物，以便在模拟中考虑到它们。
              */
             Simulator.Instance.processObstacles();
         }
@@ -139,10 +135,10 @@ namespace RVO
         #if RVO_OUTPUT_TIME_AND_POSITIONS
         void updateVisualization()
         {
-            /* Output the current global time. */
+            /* 输出当前的全局时间。 */
             Console.Write(Simulator.Instance.getGlobalTime());
 
-            /* Output the current position of all the agents. */
+            /* 输出所有智能体的当前位置。 */
             for (int i = 0; i < Simulator.Instance.getNumAgents(); ++i)
             {
                 Console.Write(" {0}", Simulator.Instance.getAgentPosition(i));
@@ -155,8 +151,7 @@ namespace RVO
         void setPreferredVelocities()
         {
             /*
-             * Set the preferred velocity to be a vector of unit magnitude
-             * (speed) in the direction of the goal.
+             * 将首选速度设置为目标方向上单位幅度（速度）的向量。
              */
             for (int i = 0; i < Simulator.Instance.getNumAgents(); ++i)
             {
@@ -169,7 +164,7 @@ namespace RVO
 
                 Simulator.Instance.setAgentPrefVelocity(i, goalVector);
 
-                /* Perturb a little to avoid deadlocks due to perfect symmetry. */
+                /* 稍微扰动一下以避免由于完美对称而导致死锁。 */
                 float angle = (float)random.NextDouble() * 2.0f * (float)Math.PI;
                 float dist = (float)random.NextDouble() * 0.0001f;
 
@@ -180,7 +175,7 @@ namespace RVO
 
         bool reachedGoal()
         {
-            /* Check if all agents have reached their goals. */
+            /* 检查所有代理是否都达到了目标。 */
             for (int i = 0; i < Simulator.Instance.getNumAgents(); ++i)
             {
                 if (RVOMath.absSq(Simulator.Instance.getAgentPosition(i) - goals[i]) > 400.0f)
@@ -196,10 +191,10 @@ namespace RVO
         {
             Blocks blocks = new Blocks();
 
-            /* Set up the scenario. */
+            /* 设置场景。 */
             blocks.setupScenario();
 
-            /* Perform (and manipulate) the simulation. */
+            /* 执行（并操纵）模拟。 */
             do
             {
                 #if RVO_OUTPUT_TIME_AND_POSITIONS

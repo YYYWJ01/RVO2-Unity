@@ -41,12 +41,14 @@ namespace RVO
     internal class Agent
     {
         /// <summary>
-        /// 代理邻居列表
+        /// 代理邻居列表<距离，代理对象>
+        /// PS：按照距离由近到远依次排列
         /// </summary>
         /// <returns></returns>
         internal IList<KeyValuePair<float, Agent>> agentNeighbors_ = new List<KeyValuePair<float, Agent>>();
         /// <summary>
-        /// 障碍邻居列表
+        /// 障碍邻居列表<距离，障碍物对象>
+        /// PS：按照距离由近到远依次排列
         /// </summary>
         /// <returns></returns>
         internal IList<KeyValuePair<float, Obstacle>> obstacleNeighbors_ = new List<KeyValuePair<float, Obstacle>>();
@@ -128,27 +130,35 @@ namespace RVO
          */
         internal void computeNewVelocity()
         {
+            // 清空存储ORCA（Optimal Reciprocal Collision Avoidance）线的列表，以准备计算新的ORCA线。
             orcaLines_.Clear();
 
+            // 计算与障碍物互动的时间视界的倒数。timeHorizonObst_ 通常表示为代理与障碍物之间的最大交互时间。
             float invTimeHorizonObst = 1.0f / timeHorizonObst_;
 
             /* 制造障碍ORCA线。 */
+            // 处理与代理相邻的障碍物。
             for (int i = 0; i < obstacleNeighbors_.Count; ++i)
             {
-
+                // 获取与代理相邻的障碍物中的当前障碍物。
                 Obstacle obstacle1 = obstacleNeighbors_[i].Value;
+                // 获取与代理相邻的障碍物中的当前障碍物的下一个障碍物，通常障碍物是按顺序连接的。
                 Obstacle obstacle2 = obstacle1.next_;
 
+                // 计算代理与障碍物1之间的相对位置矢量。
                 Vector2 relativePosition1 = obstacle1.point_ - position_;
+                // 计算代理与障碍物2之间的相对位置矢量。
                 Vector2 relativePosition2 = obstacle2.point_ - position_;
 
                 /*
                  * 检查障碍物的速度障碍是否已经被先前构建的障碍物ORCA线处理过。
                  */
+                // 用于标记障碍物是否已经被先前构建的ORCA线处理过。
                 bool alreadyCovered = false;
 
                 for (int j = 0; j < orcaLines_.Count; ++j)
                 {
+                    // 通过对已存在的ORCA线进行检查，以确定是否已经处理了障碍物。
                     if (RVOMath.det(invTimeHorizonObst * relativePosition1 - orcaLines_[j].point, orcaLines_[j].direction) - invTimeHorizonObst * radius_ >= -RVOMath.RVO_EPSILON && RVOMath.det(invTimeHorizonObst * relativePosition2 - orcaLines_[j].point, orcaLines_[j].direction) - invTimeHorizonObst * radius_ >= -RVOMath.RVO_EPSILON)
                     {
                         alreadyCovered = true;
@@ -157,21 +167,30 @@ namespace RVO
                     }
                 }
 
+                // 用于标记障碍物是否已经被先前构建的ORCA线处理过。
                 if (alreadyCovered)
                 {
                     continue;
                 }
 
                 /* 尚未覆盖。检查碰撞。 */
+                // 计算代理与障碍物1之间的距离的平方。
                 float distSq1 = RVOMath.absSq(relativePosition1);
+                // // 计算代理与障碍物1之间的距离的平方。
                 float distSq2 = RVOMath.absSq(relativePosition2);
 
+                // 计算代理的半径 radius_ 的平方。
                 float radiusSq = RVOMath.sqr(radius_);
 
+                // 计算障碍物1到障碍物2的矢量 obstacleVector，这是用来描述障碍物边的方向的矢量。
                 Vector2 obstacleVector = obstacle2.point_ - obstacle1.point_;
+                // 计算代理相对于障碍物边的投影参数 s。这个参数用于表示代理在障碍物上的投影点的位置。
+                // 如果 s 的值小于0，代表代理在障碍物1的左侧，如果 s 的值大于1，代表代理在障碍物2的左侧，如果 s 的值在0到1之间，代表代理在障碍物边之间。
                 float s = (-relativePosition1 * obstacleVector) / RVOMath.absSq(obstacleVector);
+                // 计算代理与障碍物边之间的距离的平方，即代理与障碍物边之间的最短距离的平方。这个值用于判断代理是否与障碍物边相交或接近。
                 float distSqLine = RVOMath.absSq(-relativePosition1 - s * obstacleVector);
 
+                // 声明一个 Line 结构，用于存储ORCA线的信息。
                 Line line;
 
                 if (s < 0.0f && distSq1 <= radiusSq)
@@ -214,6 +233,7 @@ namespace RVO
                  * 没有碰撞。 计算腿。 当倾斜观察时，两条腿可以来自同一个顶点。 当非凸顶点时，腿延伸截止线。
                  */
 
+                // 用于表示代理的左腿和右腿的方向。左腿是指代理相对于障碍物1的腿，右腿是指代理相对于障碍物2的腿。
                 Vector2 leftLegDirection, rightLegDirection;
 
                 if (s < 0.0f && distSqLine <= radiusSq)
@@ -489,6 +509,7 @@ namespace RVO
 
                     agentNeighbors_[i] = new KeyValuePair<float, Agent>(distSq, agent);
 
+                    // 如果当前代理邻居数据 等于 最大代理邻居数量，则将该代理周围的平方范围设置为 最远代理邻居的距离
                     if (agentNeighbors_.Count == maxNeighbors_)
                     {
                         rangeSq = agentNeighbors_[agentNeighbors_.Count - 1].Key;
@@ -498,37 +519,39 @@ namespace RVO
         }
 
         /**
-         * <summary>Inserts a static obstacle neighbor into the set of neighbors
-         * of this agent.</summary>
+         * <summary>将静态障碍物邻居插入到该代理的邻居集中。</summary>
          *
-         * <param name="obstacle">The number of the static obstacle to be
-         * inserted.</param>
-         * <param name="rangeSq">The squared range around this agent.</param>
+         * <param name="obstacle">需要插入的静态障碍物。</param>
+         * <param name="rangeSq">代理与障碍物之间的最大距离的平方。</param>
          */
         internal void insertObstacleNeighbor(Obstacle obstacle, float rangeSq)
         {
             Obstacle nextObstacle = obstacle.next_;
 
+            // 计算代理与给定障碍物 obstacle 所形成的线段的距离的平方。
             float distSq = RVOMath.distSqPointLineSegment(obstacle.point_, nextObstacle.point_, position_);
 
+            // 代理与该障碍物足够近，可以考虑将其添加到邻近障碍物列表中。
             if (distSq < rangeSq)
             {
                 obstacleNeighbors_.Add(new KeyValuePair<float, Obstacle>(distSq, obstacle));
 
                 int i = obstacleNeighbors_.Count - 1;
 
+                // 将添加的障碍物按距离的平方从小到大排序，以便后续可以更轻松地找到最近的邻近障碍物。循环会持续直到找到合适的位置或遍历完整个列表。
                 while (i != 0 && distSq < obstacleNeighbors_[i - 1].Key)
                 {
+                    // 如果当前障碍物的距离更小，就将前一个障碍物往后移动一位。
                     obstacleNeighbors_[i] = obstacleNeighbors_[i - 1];
                     --i;
                 }
+                // 将当前障碍物插入到适当的位置，以确保列表中的障碍物按距离的平方从小到大排序。
                 obstacleNeighbors_[i] = new KeyValuePair<float, Obstacle>(distSq, obstacle);
             }
         }
 
         /**
-         * <summary>Updates the two-dimensional position and two-dimensional
-         * velocity of this agent.</summary>
+         * <summary>更新该代理的二维位置和二维速度。</summary>
          */
         internal void update()
         {
@@ -537,20 +560,16 @@ namespace RVO
         }
 
         /**
-         * <summary>Solves a one-dimensional linear program on a specified line
-         * subject to linear constraints defined by lines and a circular
-         * constraint.</summary>
+         * <summary>在受直线和圆形约束定义的线性约束约束下，求解指定直线上的一维线性规划。</summary>
          *
-         * <returns>True if successful.</returns>
+         * <returns>如果成功则为 true 。</returns>
          *
-         * <param name="lines">Lines defining the linear constraints.</param>
-         * <param name="lineNo">The specified line constraint.</param>
-         * <param name="radius">The radius of the circular constraint.</param>
-         * <param name="optVelocity">The optimization velocity.</param>
-         * <param name="directionOpt">True if the direction should be optimized.
-         * </param>
-         * <param name="result">A reference to the result of the linear program.
-         * </param>
+         * <param name="lines">定义线性约束的线。</param>
+         * <param name="lineNo">指定的线约束。</param>
+         * <param name="radius">圆形约束的半径。</param>
+         * <param name="optVelocity">优化速度。</param>
+         * <param name="directionOpt">如果应该优化方向则为 true。</param>
+         * <param name="result">对线性程序结果的引用。</param>
          */
         private bool linearProgram1(IList<Line> lines, int lineNo, float radius, Vector2 optVelocity, bool directionOpt, ref Vector2 result)
         {
@@ -559,7 +578,7 @@ namespace RVO
 
             if (discriminant < 0.0f)
             {
-                /* Max speed circle fully invalidates line lineNo. */
+                /* 最大速度圈使线路 lineNo 完全失效。 */
                 return false;
             }
 
@@ -574,7 +593,7 @@ namespace RVO
 
                 if (RVOMath.fabs(denominator) <= RVOMath.RVO_EPSILON)
                 {
-                    /* Lines lineNo and i are (almost) parallel. */
+                    /* 线 lineNo 和 i （几乎）平行。 */
                     if (numerator < 0.0f)
                     {
                         return false;
@@ -587,12 +606,12 @@ namespace RVO
 
                 if (denominator >= 0.0f)
                 {
-                    /* Line i bounds line lineNo on the right. */
+                    /* 第 i 行将右侧的第 lineNo 行作为边界。 */
                     tRight = Math.Min(tRight, t);
                 }
                 else
                 {
-                    /* Line i bounds line lineNo on the left. */
+                    /* 第 i 行将左侧的第 lineNo 行作为边界。 */
                     tLeft = Math.Max(tLeft, t);
                 }
 
@@ -604,21 +623,21 @@ namespace RVO
 
             if (directionOpt)
             {
-                /* Optimize direction. */
+                /* 优化方向。 */
                 if (optVelocity * lines[lineNo].direction > 0.0f)
                 {
-                    /* Take right extreme. */
+                    /* 采取右极端。 */
                     result = lines[lineNo].point + tRight * lines[lineNo].direction;
                 }
                 else
                 {
-                    /* Take left extreme. */
+                    /* 采取左极端。 */
                     result = lines[lineNo].point + tLeft * lines[lineNo].direction;
                 }
             }
             else
             {
-                /* Optimize closest point. */
+                /* 优化最近点。 */
                 float t = lines[lineNo].direction * (optVelocity - lines[lineNo].point);
 
                 if (t < tLeft)
@@ -639,38 +658,33 @@ namespace RVO
         }
 
         /**
-         * <summary>Solves a two-dimensional linear program subject to linear
-         * constraints defined by lines and a circular constraint.</summary>
+         * <summary>求解受直线和圆形约束定义的线性约束影响的二维线性规划。</summary>
          *
-         * <returns>The number of the line it fails on, and the number of lines
-         * if successful.</returns>
+         * <returns>失败的行数以及成功的行数。</returns>
          *
-         * <param name="lines">Lines defining the linear constraints.</param>
-         * <param name="radius">The radius of the circular constraint.</param>
-         * <param name="optVelocity">The optimization velocity.</param>
-         * <param name="directionOpt">True if the direction should be optimized.
-         * </param>
-         * <param name="result">A reference to the result of the linear program.
-         * </param>
+         * <param name="lines">定义线性约束的线。</param>
+         * <param name="radius">圆形约束的半径。</param>
+         * <param name="optVelocity">优化速度。</param>
+         * <param name="directionOpt">如果应该优化方向则为 true。</param>
+         * <param name="result">对线性程序结果的引用。</param>
          */
         private int linearProgram2(IList<Line> lines, float radius, Vector2 optVelocity, bool directionOpt, ref Vector2 result)
         {
             if (directionOpt)
             {
                 /*
-                 * Optimize direction. Note that the optimization velocity is of
-                 * unit length in this case.
+                 * 优化方向。 请注意，在这种情况下，优化速度是单位长度。
                  */
                 result = optVelocity * radius;
             }
             else if (RVOMath.absSq(optVelocity) > RVOMath.sqr(radius))
             {
-                /* Optimize closest point and outside circle. */
+                /* 优化最近点和外圆。 */
                 result = RVOMath.normalize(optVelocity) * radius;
             }
             else
             {
-                /* Optimize closest point and inside circle. */
+                /* 优化最近点和内圆。 */
                 result = optVelocity;
             }
 
@@ -678,7 +692,7 @@ namespace RVO
             {
                 if (RVOMath.det(lines[i].direction, lines[i].point - result) > 0.0f)
                 {
-                    /* Result does not satisfy constraint i. Compute new optimal result. */
+                    /* 结果不满足约束 i。 计算新的最优结果。 */
                     Vector2 tempResult = result;
                     if (!linearProgram1(lines, i, radius, optVelocity, directionOpt, ref result))
                     {
@@ -693,16 +707,13 @@ namespace RVO
         }
 
         /**
-         * <summary>Solves a two-dimensional linear program subject to linear
-         * constraints defined by lines and a circular constraint.</summary>
+         * <summary>求解受直线和圆形约束定义的线性约束影响的二维线性规划。</summary>
          *
-         * <param name="lines">Lines defining the linear constraints.</param>
-         * <param name="numObstLines">Count of obstacle lines.</param>
-         * <param name="beginLine">The line on which the 2-d linear program
-         * failed.</param>
-         * <param name="radius">The radius of the circular constraint.</param>
-         * <param name="result">A reference to the result of the linear program.
-         * </param>
+         * <param name="lines">定义线性约束的线。</param>
+         * <param name="numObstLines">障碍线计数。</param>
+         * <param name="beginLine">二维线性程序失败的线。</param>
+         * <param name="radius">圆形约束的半径。</param>
+         * <param name="result">对线性程序结果的引用。</param>
          */
         private void linearProgram3(IList<Line> lines, int numObstLines, int beginLine, float radius, ref Vector2 result)
         {
@@ -712,7 +723,7 @@ namespace RVO
             {
                 if (RVOMath.det(lines[i].direction, lines[i].point - result) > distance)
                 {
-                    /* Result does not satisfy constraint of line i. */
+                    /* 结果不满足第 i 行的约束。 */
                     IList<Line> projLines = new List<Line>();
                     for (int ii = 0; ii < numObstLines; ++ii)
                     {
@@ -727,15 +738,15 @@ namespace RVO
 
                         if (RVOMath.fabs(determinant) <= RVOMath.RVO_EPSILON)
                         {
-                            /* Line i and line j are parallel. */
+                            /* 线 i 和线 j 平行。 */
                             if (lines[i].direction * lines[j].direction > 0.0f)
                             {
-                                /* Line i and line j point in the same direction. */
+                                /* i 线和 j 线指向同一方向。 */
                                 continue;
                             }
                             else
                             {
-                                /* Line i and line j point in opposite direction. */
+                                /* i 线和 j 线指向相反的方向。 */
                                 line.point = 0.5f * (lines[i].point + lines[j].point);
                             }
                         }
@@ -752,10 +763,7 @@ namespace RVO
                     if (linearProgram2(projLines, radius, new Vector2(-lines[i].direction.y(), lines[i].direction.x()), true, ref result) < projLines.Count)
                     {
                         /*
-                         * This should in principle not happen. The result is by
-                         * definition already in the feasible region of this
-                         * linear program. If it fails, it is due to small
-                         * floating point error, and the current result is kept.
+                         * 原则上这不应该发生。 根据定义，结果已经位于该线性规划的可行区域内。 如果失败，则为浮点误差小，保留当前结果。
                          */
                         result = tempResult;
                     }
