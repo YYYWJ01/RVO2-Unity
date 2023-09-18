@@ -176,7 +176,7 @@ namespace RVO
                 /* 尚未覆盖。检查碰撞。 */
                 // 计算代理与障碍物1之间的距离的平方。
                 float distSq1 = RVOMath.absSq(relativePosition1);
-                // // 计算代理与障碍物1之间的距离的平方。
+                // 计算代理与障碍物2之间的距离的平方。
                 float distSq2 = RVOMath.absSq(relativePosition2);
 
                 // 计算代理的半径 radius_ 的平方。

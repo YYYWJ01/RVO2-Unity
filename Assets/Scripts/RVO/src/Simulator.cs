@@ -413,6 +413,7 @@ namespace RVO
 
             // 重置工作者线程的 ManualResetEvent
             for (int block = 0; block < workers_.Length; ++block)
+            
             {
                 doneEvents_[block].Reset();
                 // 将工作者线程的更新排入线程池，以在后台线程中执行
@@ -424,7 +425,7 @@ namespace RVO
 
             // 增加全局时间，通常用于推进模拟的时间步长
             globalTime_ += timeStep_;
-            
+
             return globalTime_;
         }
 
