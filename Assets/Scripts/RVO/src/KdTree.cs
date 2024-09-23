@@ -171,6 +171,7 @@ namespace RVO
          */
         internal void buildAgentTree()
         {
+            // Debug.Log(" agents_.Length : "+agents_.Length);
             if (agents_ == null || agents_.Length != Simulator.Instance.agents_.Count)
             {
                 agents_ = new Agent[Simulator.Instance.agents_.Count];
@@ -270,6 +271,11 @@ namespace RVO
          */
         private void buildAgentTreeRecursive(int begin, int end, int node)
         {
+            if (agents_.Length > 5)
+            {
+                var temp = 5;
+                Debug.Log(" -------------- ");
+            }
             agentTree_[node].begin_ = begin;
             agentTree_[node].end_ = end;
             agentTree_[node].minX_ = agentTree_[node].maxX_ = agents_[begin].position_.x_;

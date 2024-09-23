@@ -45,7 +45,10 @@ namespace RVO
          * <summary>定义一个工作者。</summary>
          */
         private class Worker
-        {
+        {   
+            /// <summary>
+            /// 手动重置事件
+            /// </summary>
             private ManualResetEvent doneEvent_;
             private int end_;
             private int start_;
@@ -711,6 +714,12 @@ namespace RVO
             return kdTree_.queryVisibility(point1, point2, radius);
         }
 
+        /// <summary>
+        /// 查询附近代理
+        /// </summary>
+        /// <param name="point">鼠标点击点</param>
+        /// <param name="radius">半径</param>
+        /// <returns></returns>
         public int queryNearAgent(Vector2 point, float radius)
         {
             if (getNumAgents() == 0)
@@ -870,6 +879,7 @@ namespace RVO
             if (numWorkers_ <= 0)
             {
                 int completionPorts;
+                // 获取线程池的最小工作线程数和完成端口线程数
                 ThreadPool.GetMinThreads(out numWorkers_, out completionPorts);
             }
             workers_ = null;

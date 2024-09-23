@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace RVO
 {
@@ -136,6 +137,7 @@ namespace RVO
             // 计算与障碍物互动的时间视界的倒数。timeHorizonObst_ 通常表示为代理与障碍物之间的最大交互时间。
             float invTimeHorizonObst = 1.0f / timeHorizonObst_;
 
+            Debug.Log(" this.obstacleNeighbors_ : "+this.obstacleNeighbors_.Count);
             /* 制造障碍ORCA线。 */
             // 处理与代理相邻的障碍物。
             for (int i = 0; i < obstacleNeighbors_.Count; ++i)
@@ -401,6 +403,11 @@ namespace RVO
 
             float invTimeHorizon = 1.0f / timeHorizon_;
 
+            Debug.Log(" 000 ");
+            if (agentNeighbors_.Count > 0)
+            {
+                Debug.Log(" 000 ");
+            }
             /* 创建 ORCA 代理线。 */
             for (int i = 0; i < agentNeighbors_.Count; ++i)
             {
